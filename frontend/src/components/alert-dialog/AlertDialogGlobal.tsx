@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { useTranslation } from 'react-i18next';
-import { selectAlertDialogState } from '@/store/reducers/alert-dialog/alert-dialog-selector';
+import { selectAlertDialogState } from '@/store/reducers/alert-dialog/alert-dialog-selectors';
 import { onCancelClick, onConfirmClick } from '@/store/reducers/alert-dialog';
 
 export interface IAlertDialogContainerProps {

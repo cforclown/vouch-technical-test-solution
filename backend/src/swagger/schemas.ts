@@ -1,12 +1,13 @@
-import { AuthSwaggerSchemas, ChannelsSwaggerSchemas, UsersSwaggerSchemas } from '../modules';
-import { ExplorationSwaggerSchemas, PaginationPayloadSwaggerSchemas } from '../utils';
+import { AuthSwaggerSchemas, ChannelsSwaggerSchemas, MessagesSwaggerSchemas, UsersSwaggerSchemas } from '../modules';
+import { explorationSwaggerSchemas, PaginationPayloadSwaggerSchemas } from '../utils';
 
 const schemas = Object.assign(
-  { ...ExplorationSwaggerSchemas },
+  { ...explorationSwaggerSchemas },
   { ...PaginationPayloadSwaggerSchemas },
   { ...AuthSwaggerSchemas },
   { ...UsersSwaggerSchemas },
-  { ...ChannelsSwaggerSchemas }
+  { ...ChannelsSwaggerSchemas },
+  { ...MessagesSwaggerSchemas }
 );
 
 export default schemas;

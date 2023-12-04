@@ -1,13 +1,15 @@
+import { useCallback, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { collapseSidebar, hideSidebar, setIsSM, showSidebar, uncollapseSidebar } from '@/store/reducers/layout';
-import Header from './header/Header.style';
-import Content from './content';
-import { useEffect, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { selectTheme } from '@/store/reducers/layout/theme-selector';
-import { selectLayoutState } from '@/store/reducers/layout/layout-selector';
+import { collapseSidebar, hideSidebar, setIsSM, showSidebar, uncollapseSidebar } from '@/store/reducers/layout';
+import Header from './header';
+import Content from './content';
+import { selectTheme } from '@/store/reducers/layout/theme-selectors';
+import { selectLayoutState } from '@/store/reducers/layout/layout-selectors';
 import { MD_BREAKPOINT, SM_BREAKPOINT } from '@/utils/common';
 import Sidebar from './sidebar';
+import useAction from '@/hooks/useAction';
+import { getChannelsAction } from '@/store/reducers/channels/channels-actions';
 
 interface IHome {
   className?:string
@@ -16,23 +18,32 @@ interface IHome {
 function Home({ className }: IHome): JSX.Element {
   const ismounted = useRef(false);
   const dispatch = useDispatch();
-  const theme = useSelector(selectTheme);
+  const theme = useSelector(selectTheme());
   const layoutState = useSelector(selectLayoutState());
+  const getChannels = useAction(getChannelsAction);
 
   useEffect(() => {
     ismounted.current = true;
-
-    window.addEventListener('resize', onresize);
-    onresize();
+    getChannels();
 
     // UNMOUNT
     return () => {
       window.removeEventListener('resize', onresize);
       ismounted.current = false;
     };
-  }, []);
+  }, [layoutState.isSM]);
 
-  const onresize = (): void => {
+  useEffect(() => {
+    window.addEventListener('resize', onresize);
+    onresize();
+
+    // UNMOUNT
+    return () => {
+      window.removeEventListener('resize', onresize);
+    };
+  }, [layoutState.isSM]);
+
+  const onresize = useCallback(() => {
     const currentWidth = window.innerWidth;
     setSidebarCollapsed(currentWidth <= MD_BREAKPOINT);
     if (currentWidth <= SM_BREAKPOINT && !layoutState.isSM) {
@@ -40,7 +51,7 @@ function Home({ className }: IHome): JSX.Element {
     } else if (currentWidth > SM_BREAKPOINT && layoutState.isSM) {
       setLayoutIsSM(false);
     }
-  };
+  }, [layoutState.isSM]);
 
   const setLayoutIsSM = (isSM: boolean): void => {
     dispatch(setIsSM(isSM));

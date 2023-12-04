@@ -3,7 +3,7 @@ import { USER_AVATAR_BASE_URL } from '@/utils/environment';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 
-export interface IUserAvatar {
+export interface IUserAvatarProps {
   src?: string;
   size: SizeBreakpoints | number;
   className?: string;
@@ -35,7 +35,7 @@ const Container = styled.div<{ size: SizeBreakpoints | number; }>`
   }
 `;
 
-const UserAvatar = ({ src, className, size }: IUserAvatar): JSX.Element => {
+const UserAvatar = ({ src, className, size }: IUserAvatarProps): JSX.Element => {
   const errorHandler = useCallback((event: React.SyntheticEvent<HTMLImageElement, Event>): void => {
     event.currentTarget.src = '/images/default-avatar.png';
   }, []);

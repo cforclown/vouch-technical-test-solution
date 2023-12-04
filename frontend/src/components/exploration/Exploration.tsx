@@ -7,8 +7,8 @@ import { DATA_TABLE_DEFAULT_PAGE_SIZES, IDataTableActionColumn } from '@/compone
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { IExplorationPayload, IExplorationResponse } from '@/utils/exploration/exploration';
-import { IPaginationSort, PaginationSortOrders } from '@/utils/exploration/pagination';
+import { IExplorationPayload, IExplorationRes } from '@/utils/exploration/exploration';
+import { IPaginationSort, EPaginationSortOrders } from '@/utils/exploration/pagination';
 import { IMetadataField } from '@/utils/metadata';
 import withCommonState, { IWithCommonStateProps } from '../HOC/withCommonState';
 import H2 from '../typography/h2';
@@ -18,7 +18,7 @@ export interface IExplorationProps<T> extends IWithCommonStateProps {
   title?: string;
   columns: IMetadataField<T>[];
   clientPaginationFetchFunc?: () => Promise<T[]>;
-  apiPaginationGetDataFunc: (payload: IExplorationPayload) => Promise<IExplorationResponse<T>>;
+  apiPaginationGetDataFunc: (payload: IExplorationPayload) => Promise<IExplorationRes<T>>;
   filterField?: string;
   actionColumn?: IDataTableActionColumn;
   disableClientPagination?: boolean;
@@ -42,7 +42,7 @@ function Exploration<T>({
   const navigate = useNavigate();
   const hasIinitialFetchRef = useRef(false);
   const [isClientPagination, setIsClientPagination] = useState(false);
-  const [exploration, setExploration] = useState<IExplorationResponse<T>>({
+  const [exploration, setExploration] = useState<IExplorationRes<T>>({
     data: [],
     exploration: {
       query: '',
@@ -50,7 +50,7 @@ function Exploration<T>({
         page: 1,
         limit: DATA_TABLE_DEFAULT_PAGE_SIZES[1],
         pageCount: 1,
-        sort: { by: columns[0].accessorKey ?? '', order: PaginationSortOrders.ASC }
+        sort: { by: columns[0].accessorKey ?? '', order: EPaginationSortOrders.ASC }
       }
     }
   });

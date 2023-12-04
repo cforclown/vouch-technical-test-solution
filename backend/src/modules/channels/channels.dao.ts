@@ -1,7 +1,8 @@
 import { IChannel } from './channels.types';
 import { BaseDataAccessObject } from '../../utils/base/base-dao-mongo';
 import { model } from 'mongoose';
-import { IExplorationPayload, IExplorationResponse } from '../../utils';
+import { IExplorationPayload, IExplorationRes } from '../../utils';
+import { IMessage } from '../messages';
 
 export class ChannelsDao extends BaseDataAccessObject<IChannel> {
   public static readonly INSTANCE_NAME = 'channelsDao';
@@ -11,7 +12,7 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
     super(model<IChannel>(ChannelsDao.MODEL_NAME));
   }
 
-  async explore ({ query, pagination }: IExplorationPayload): Promise<IExplorationResponse<IChannel>> {
+  async explore ({ query, pagination }: IExplorationPayload): Promise<IExplorationRes<IChannel>> {
     const result = await this.model
       .aggregate([
         {
@@ -64,5 +65,40 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
     }
 
     return response;
+  }
+
+  async pushMsg (channel: string, msg: IMessage): Promise<IMessage | null> {
+    return this.model.findOneAndUpdate({ _id: channel }, {
+      $push: { messages: msg }
+    }, { new: true });
+  }
+
+  async editMsg (channel: string, msgId: string, text: string): Promise<IMessage | null> {
+    const channelDoc = await this.get(channel);
+    if (!channelDoc) {
+      return null;
+    }
+    const msgDoc: IMessage | undefined = channelDoc.messages.find(m => m.id === msgId);
+    if (!msgDoc) {
+      return null;
+    }
+
+    msgDoc.text = text;
+    await channelDoc.save();
+
+    return msgDoc;
+  }
+
+  async getMsgs (channel: string, exploration: IExplorationPayload): Promise<IExplorationRes<IMessage>> {
+    return {
+      data: [],
+      exploration: {
+        ...exploration,
+        pagination: {
+          ...exploration.pagination,
+          pageCount: 1
+        }
+      }
+    };
   }
 }

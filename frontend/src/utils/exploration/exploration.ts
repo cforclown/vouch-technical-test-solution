@@ -5,9 +5,11 @@ export interface IExplorationPayload {
   pagination: IPaginationPayload;
 }
 
-export interface IExplorationResponse<T> {
+export interface IExplorationResConfig extends IExplorationPayload {
+  pagination: IPaginationResponse
+}
+
+export interface IExplorationRes<T> {
   data: T[],
-  exploration: IExplorationPayload & {
-    pagination: IPaginationResponse
-  }
+  exploration: IExplorationResConfig
 }

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ChannelsController } from './channels.controller';
-import { ExplorationPayloadSchema, RequestHandler, validateBody, validateParams } from '../../utils';
-import { createGroupPayloadSchema, updateGroupPayloadSchema } from './channels.dto';
+import { explorationPayloadSchema, RequestHandler, validateBody, validateParams } from '../../utils';
+import { createGroupDtoSchema, updateGroupDtoSchema } from './channels.dto';
 import { idSchema } from '../../schemas';
 
 export const CHANNELS_ROUTER_INSTANCE_NAME = 'channelsRouter';
@@ -58,51 +58,51 @@ export function ChannelsRouter (channelsController: ChannelsController): Router 
    *                      schema:
    *                          $ref: '#/components/schemas/explorationPayload'
    */
-  router.post('/explore', validateBody(ExplorationPayloadSchema), RequestHandler(channelsController.explore));
+  router.post('/explore', validateBody(explorationPayloadSchema), RequestHandler(channelsController.explore));
 
   /**
    * @swagger
-   * /api/v1/channels:
+   * /api/v1/channels/group:
    *      post:
    *          tags:
    *              - Channels
-   *          description: Create channel
+   *          description: Create group
    *          responses:
    *              '200':
    *                  description: OK
    *          requestBody:
-   *              description: "Create channel payload"
+   *              description: "Create group"
    *              required: true
    *              content:
    *                  application/json:
    *                      schema:
-   *                          $ref: '#/components/schemas/createChannel'
+   *                          $ref: '#/components/schemas/createGroup'
    */
-  router.post('/', validateBody(createGroupPayloadSchema), RequestHandler(channelsController.create));
+  router.post('/group', validateBody(createGroupDtoSchema), RequestHandler(channelsController.createGroup));
+
+  /**
+   * @swagger
+   * /api/v1/channels/group{id}:
+   *      patch:
+   *          tags:
+   *              - Channels
+   *          description: Update group
+   *          responses:
+   *              '200':
+   *                  description: OK
+   *          requestBody:
+   *              description: "Update group payload"
+   *              required: true
+   *              content:
+   *                  application/json:
+   *                      schema:
+   *                          $ref: '#/components/schemas/upgradeGroup'
+   */
+  router.patch('/group/:id', validateParams(idSchema), validateBody(updateGroupDtoSchema), RequestHandler(channelsController.createGroup));
 
   /**
    * @swagger
    * /api/v1/channels/{id}:
-   *      patch:
-   *          tags:
-   *              - Channels
-   *          description: Update channel
-   *          responses:
-   *              '200':
-   *                  description: OK
-   *          requestBody:
-   *              description: "Update channel payload"
-   *              required: true
-   *              content:
-   *                  application/json:
-   *                      schema:
-   *                          $ref: '#/components/schemas/updateChannel'
-   */
-  router.patch('/:id', validateParams(idSchema), validateBody(updateGroupPayloadSchema), RequestHandler(channelsController.update));
-
-  /**
-   * @swagger
-   * /api/v1/channels:
    *      delete:
    *          tags:
    *              - Channels
@@ -115,7 +115,7 @@ export function ChannelsRouter (channelsController: ChannelsController): Router 
    *                  in: path
    *                  required: true
    */
-  router.delete('/:id', RequestHandler(channelsController.delete));
+  router.delete('/:id', validateParams(idSchema), RequestHandler(channelsController.delete));
 
   return router;
 }

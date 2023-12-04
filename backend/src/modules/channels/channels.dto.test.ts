@@ -1,13 +1,13 @@
 import { validateSchema } from '../../utils/validate-schema';
 import { ValidationException } from '../../utils/exceptions/validation-exception';
-import { createGroupPayloadSchema, updateGroupPayloadSchema } from './channels.dto';
+import { createGroupDtoSchema, updateGroupDtoSchema } from './channels.dto';
 import { mockCreateGroupPayload, mockUpdateGroupPayload } from '../../test/mock-channels-data';
 
 describe('channels.dto', () => {
   describe('CreateGroupPayloadSchema', () => {
     it('should return value when schema is valid', () => {
       const result = validateSchema({
-        schema: createGroupPayloadSchema,
+        schema: createGroupDtoSchema,
         payload: mockCreateGroupPayload
       });
       expect(result).toEqual(mockCreateGroupPayload);
@@ -15,7 +15,7 @@ describe('channels.dto', () => {
 
     it('should throw validation exception when required field not provided', () => {
       expect(() => validateSchema({
-        schema: createGroupPayloadSchema,
+        schema: createGroupDtoSchema,
         payload: {
           ...mockCreateGroupPayload,
           name: undefined
@@ -27,18 +27,18 @@ describe('channels.dto', () => {
   describe('UpdateGroupPayloadSchema', () => {
     it('should return value when schema is valid', () => {
       expect(validateSchema({
-        schema: updateGroupPayloadSchema,
+        schema: updateGroupDtoSchema,
         payload: mockUpdateGroupPayload
       })).toEqual(mockUpdateGroupPayload);
 
       expect(validateSchema({
-        schema: updateGroupPayloadSchema,
+        schema: updateGroupDtoSchema,
         payload: { name: 'new name' }
       })).toEqual({ name: 'new name' });
     });
 
     it('should throw validation exception when payload is not object', () => {
-      expect(() => validateSchema({ schema: updateGroupPayloadSchema, payload: null })).toThrow(ValidationException);
+      expect(() => validateSchema({ schema: updateGroupDtoSchema, payload: null })).toThrow(ValidationException);
     });
   });
 });

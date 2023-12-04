@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { EChannelRoles, ICreateChannelPayload, ICreateGroupChannelPayload, IUpdateChannelPayload } from '../modules';
+import { EChannelRoles, ICreateDmChannel, ICreateGroupDto, IUpdateGroupDto } from '../modules';
 import { IExplorationPayload } from '../utils/exploration/exploration';
 import { mockUser } from './mock-users-data';
 
@@ -23,33 +23,27 @@ export const mockChannelApiRes = {
   }]
 };
 
-export const mockCreateChannelPayload: ICreateChannelPayload = {
-  name: 'channel name',
+export const mockCreateChannelPayload: ICreateDmChannel = {
   type: 'dm',
-  desc: 'mock channel desc',
-  users: [mockUser.id],
-  roles: [{
-    user: mockUser.id,
-    role: EChannelRoles.OWNER
-  }]
+  users: [mockUser.id]
 };
 
-export const mockCreateGroupPayload: ICreateGroupChannelPayload = {
+export const mockCreateGroupPayload: ICreateGroupDto = {
   name: 'channel name',
   desc: 'mock channel desc',
   users: [mockUser.id],
   roles: [{
-    user: mockUser.id,
+    user: mockUser.id as string,
     role: EChannelRoles.OWNER
   }]
 };
 
-export const mockUpdateChannelPayload: IUpdateChannelPayload = {
+export const mockUpdateChannelPayload: IUpdateGroupDto = {
   name: 'channel name',
   desc: 'mock channel desc'
 };
 
-export const mockUpdateGroupPayload: IUpdateChannelPayload = {
+export const mockUpdateGroupPayload: IUpdateGroupDto = {
   name: 'channel name',
   desc: 'mock channel desc'
 };

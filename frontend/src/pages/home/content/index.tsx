@@ -3,7 +3,7 @@ import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 const Welcome =  React.lazy(() => import('../pages/welcome'));
-const Schedules =  React.lazy(() => import('../pages/schedules'));
+const Channels =  React.lazy(() => import('../pages/channels/index.tsx'));
 
 function Content(): JSX.Element {
   return (
@@ -11,7 +11,7 @@ function Content(): JSX.Element {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route key="welcome" path="/" element={<Welcome />} />
-          <Route key="schedules" path="schedules/*" element={<Schedules />} />
+          <Route key="channels" path="channels/*" element={<Channels />} />
           <Route key="*" path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Suspense>

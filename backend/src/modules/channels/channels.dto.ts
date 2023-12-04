@@ -1,7 +1,17 @@
 import Joi from 'joi';
 import { EChannelRoles } from './channels.types';
 
-export const createGroupPayloadSchema = Joi.object({
+export interface ICreateGroupDto {
+  name: string;
+  desc?: string;
+  users: string[];
+  roles: {
+    user: string;
+    role: EChannelRoles
+  }[];
+}
+
+export const createGroupDtoSchema = Joi.object<ICreateGroupDto>({
   name: Joi.string().required(),
   desc: Joi.string().allow('').default(null),
   users: Joi.array().items(Joi.string()).required(),
@@ -11,10 +21,18 @@ export const createGroupPayloadSchema = Joi.object({
   })).required()
 });
 
-export const updateGroupPayloadSchema = Joi.object({
+export interface IUpdateGroupDto {
+  name?: string;
+  desc?: string;
+  roles?: {
+    user: string;
+    role: EChannelRoles
+  }[];
+}
+
+export const updateGroupDtoSchema = Joi.object<IUpdateGroupDto>({
   name: Joi.string(),
   desc: Joi.string(),
-  users: Joi.array().items(Joi.string()),
   roles: Joi.array().items(Joi.object({
     user: Joi.string().required(),
     role: Joi.string().allow(EChannelRoles).required()

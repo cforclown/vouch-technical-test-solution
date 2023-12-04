@@ -17,7 +17,7 @@ import DataTableColumnsDropdown from './DataTableColumnsDropdown';
 import DataTableSimpleFilter from './DataTableSimpleFilter';
 import { DATA_TABLE_DEFAULT_PAGE_SIZES, IDataTableActionColumn } from './DataTable.service';
 import DataTablePageSizeDropdown from './DataTablePageSizeDropdown';
-import { IPaginationResponse, IPaginationSort, PaginationSortOrders } from '@/utils/exploration/pagination';
+import { IPaginationResponse, IPaginationSort, EPaginationSortOrders } from '@/utils/exploration/pagination';
 import { IMetadataField } from '@/utils/metadata';
 
 interface IDataTableProps<T> {
@@ -61,7 +61,7 @@ function DataTable<T>({
   // SORTING VARIABLES (client pagination) -----------------------------------------------------
   const [sorting, setSorting] = useState<SortingState>((!isClientPagination && pagination) ? [{
     id: pagination.sort.by,
-    desc: pagination.sort.order === PaginationSortOrders.DESC
+    desc: pagination.sort.order === EPaginationSortOrders.DESC
   }] : []);
   // -------------------------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ function DataTable<T>({
     onSortingChange: (!isClientPagination && pagination && onSortChange) 
       ? (sort: any) => onSortChange({
         by: sort()[0].id ?? columns[0].accessorKey,
-        order: sort()[0]?.desc ? PaginationSortOrders.DESC : PaginationSortOrders.ASC
+        order: sort()[0]?.desc ? EPaginationSortOrders.DESC : EPaginationSortOrders.ASC
       }) 
       : setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -110,7 +110,7 @@ function DataTable<T>({
     state: {
       sorting: (!isClientPagination && pagination) ? [{
         id: pagination.sort.by,
-        desc: pagination.sort.order === PaginationSortOrders.DESC
+        desc: pagination.sort.order === EPaginationSortOrders.DESC
       }] : sorting,
       columnFilters,
       columnVisibility,

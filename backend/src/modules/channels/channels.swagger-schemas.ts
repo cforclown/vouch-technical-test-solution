@@ -14,7 +14,7 @@ export const ChannelsSwaggerSchemas = {
       }
     }
   },
-  updateChannel: {
+  upgradeGroup: {
     type: 'object',
     properties: {
       name: { type: 'string' },

@@ -1,25 +1,26 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { useSelector } from 'react-redux';
 import Loader from '@/components/loader/Loader.style';
 import AlertDialogGlobal from '@/components/alert-dialog/AlertDialogGlobal';
-import { selectTheme } from '@/store/reducers/layout/theme-selector';
+import { selectTheme } from '@/store/reducers/layout/theme-selectors';
 import { ITheme } from '@/themes/Themes';
-import { selectUserContext } from '@/store/reducers/user-context/user-context-selector';
+import { selectUserContext } from '@/store/reducers/user-context/user-context-selectors';
 import storageService from '@/utils/storage-service';
-import { useDispatch } from 'react-redux';
 import { IUserContext, USER_CONTEXT_STORAGE_KEY, setUserContext } from '@/store/reducers/user-context';
+import useAction from '@/hooks/useAction';
 
 const Page404 = lazy(() => import('@/pages/404'));
 const Auth = lazy(() => import('@/pages/auth'));
 const Home = lazy(() => import('@/pages/home'));
 
 function App() {
-  const theme: ITheme = useSelector(selectTheme);
+  const theme: ITheme = useSelector(selectTheme());
+  const [loading, setLoading] = useState(true);
   const userContext = useSelector(selectUserContext());
+  const setUserContextAction = useAction(setUserContext);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (userContext) {
@@ -32,14 +33,20 @@ function App() {
         return navigate('/auth/signin');
       }
 
-      dispatch(setUserContext(savedUserContext));
+      setUserContextAction(savedUserContext);
     } catch (err) {
       if (err instanceof Error) {
         // eslint-disable-next-line no-console
         console.log(err.message);
       }
+    } finally {
+      setLoading(false);
     }
   }, []);
+
+  if (loading) {
+    return ( <Loader />);
+  }
 
   return (
     <ThemeProvider theme={theme}>

@@ -69,7 +69,7 @@ export class UsersService {
     }
 
     return this.usersDao.update({
-      id: user._id,
+      id: user._id.toString(),
       password: (await hashPassword(payload.newPassword))
     });
   }

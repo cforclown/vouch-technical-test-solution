@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, HttpStatusCode } from 'axios';
 import { API_ENDPOINT } from './environment';
-import Store, { IAppState } from '@/store';
+import store, { IAppState } from '@/store';
 import { IUserContext, deleteUserContext, setUserContext } from '@/store/reducers/user-context';
 
 export enum HTTPStatusCodes {
@@ -110,8 +110,8 @@ export const callMainAPI = async <T>(endpoint: IAPIEndpoint, body?: any): Promis
 
 export const callProtectedMainAPI = async <T>(endpoint: IAPIEndpoint, body?: any, autoRefreshAccessToken = true): Promise<T> => {
   try {
-    const accessToken = (Store.getState() as IAppState).userContext.context?.accessToken;
-    const refreshToken = (Store.getState() as IAppState).userContext.context?.refreshToken;
+    const accessToken = (store.getState() as IAppState).userContext.context?.accessToken;
+    const refreshToken = (store.getState() as IAppState).userContext.context?.refreshToken;
     if (!accessToken) {
       throw new CallAPIException('User is not logged in', HTTPStatusCodes.Unauthorized);
     }
@@ -126,7 +126,7 @@ export const callProtectedMainAPI = async <T>(endpoint: IAPIEndpoint, body?: any
     } catch (err) {
       if (err instanceof CallAPIException && err.status === HttpStatusCode.Unauthorized && autoRefreshAccessToken && refreshToken) {
         const newToken = await getNewToken(accessToken, refreshToken);
-        Store.dispatch(setUserContext(newToken));
+        store.dispatch(setUserContext(newToken));
         return callProtectedMainAPI(endpoint, body, false);
       }
 
@@ -134,7 +134,7 @@ export const callProtectedMainAPI = async <T>(endpoint: IAPIEndpoint, body?: any
     }
   } catch (err ){
     if (err instanceof CallAPIException && err.status === HTTPStatusCodes.Unauthorized) {
-      Store.dispatch(deleteUserContext());
+      store.dispatch(deleteUserContext());
       throw err;
     }
 

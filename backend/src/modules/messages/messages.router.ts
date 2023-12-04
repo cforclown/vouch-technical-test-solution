@@ -1,52 +1,22 @@
 import { Router } from 'express';
-import { ChannelsController } from './messages.controller';
-import { ExplorationPayloadSchema, RequestHandler, validateBody, validateParams } from '../../utils';
-import { createGroupPayloadSchema, updateGroupPayloadSchema } from './channels.dto';
+import { MessagesController } from './messages.controller';
+import { explorationPayloadSchema, RequestHandler, validateBody, validateParams } from '../../utils';
+import { sendMsgPayloadSchema, startConversationPayloadSchema } from './messages.dto';
 import { idSchema } from '../../schemas';
 
-export const CHANNELS_ROUTER_INSTANCE_NAME = 'channelsRouter';
-export const CHANNELS_BASE_API_PATH = 'channels';
+export const ROUTER_INSTANCE_NAME = 'messagesRouter';
+export const BASE_API_PATH = 'messages';
 
-export function ChannelsRouter (channelsController: ChannelsController): Router {
+export function MessagesRouter (messagesController: MessagesController): Router {
   const router = Router();
 
   /**
    * @swagger
-   * /api/v1/channels/{id}:
-   *      get:
-   *          tags:
-   *              - Channels
-   *          description: Get channel
-   *          responses:
-   *              '200':
-   *                  description: OK
-   *          parameters:
-   *              -   name: id
-   *                  in: path
-   *                  required: true
-   */
-  router.get('/:id', validateParams(idSchema), RequestHandler(channelsController.get));
-
-  /**
-   * @swagger
-   * /api/v1/channels:
-   *      get:
-   *          tags:
-   *              - Channels
-   *          description: Get all channels
-   *          responses:
-   *              '200':
-   *                  description: OK
-   */
-  router.get('/', RequestHandler(channelsController.getAll));
-
-  /**
-   * @swagger
-   * /api/v1/channels/explore:
+   * /api/v1/messages:
    *      post:
    *          tags:
-   *              - Channels
-   *          description: Explore channels with pagination
+   *              - Messages
+   *          description: Explore messages with pagination
    *          responses:
    *              '200':
    *                  description: OK
@@ -58,64 +28,47 @@ export function ChannelsRouter (channelsController: ChannelsController): Router 
    *                      schema:
    *                          $ref: '#/components/schemas/explorationPayload'
    */
-  router.post('/explore', validateBody(ExplorationPayloadSchema), RequestHandler(channelsController.explore));
+  router.post('/', validateBody(explorationPayloadSchema), RequestHandler(messagesController.getMsgs));
 
   /**
    * @swagger
-   * /api/v1/channels:
+   * /api/v1/messages:
    *      post:
    *          tags:
-   *              - Channels
-   *          description: Create channel
+   *              - Messages
+   *          description: Start a new conversation
    *          responses:
    *              '200':
    *                  description: OK
    *          requestBody:
-   *              description: "Create channel payload"
+   *              description: "Start a new conversation payload"
    *              required: true
    *              content:
    *                  application/json:
    *                      schema:
-   *                          $ref: '#/components/schemas/createChannel'
+   *                          $ref: '#/components/schemas/sendMsg'
    */
-  router.post('/', validateBody(createGroupPayloadSchema), RequestHandler(channelsController.create));
+  router.put('/', validateBody(startConversationPayloadSchema), RequestHandler(messagesController.startConversation));
 
   /**
    * @swagger
-   * /api/v1/channels/{id}:
-   *      patch:
+   * /api/v1/messages/{id}:
+   *      put:
    *          tags:
-   *              - Channels
-   *          description: Update channel
+   *              - Messages
+   *          description: Send message
    *          responses:
    *              '200':
    *                  description: OK
    *          requestBody:
-   *              description: "Update channel payload"
+   *              description: "Send message payload"
    *              required: true
    *              content:
    *                  application/json:
    *                      schema:
-   *                          $ref: '#/components/schemas/updateChannel'
+   *                          $ref: '#/components/schemas/sendMsg'
    */
-  router.patch('/:id', validateParams(idSchema), validateBody(updateGroupPayloadSchema), RequestHandler(channelsController.update));
-
-  /**
-   * @swagger
-   * /api/v1/channels:
-   *      delete:
-   *          tags:
-   *              - Channels
-   *          description: Delete channel
-   *          responses:
-   *              '200':
-   *                  description: OK
-   *          parameters:
-   *              -   name: id
-   *                  in: path
-   *                  required: true
-   */
-  router.delete('/:id', RequestHandler(channelsController.delete));
+  router.put('/:id', validateParams(idSchema), validateBody(sendMsgPayloadSchema), RequestHandler(messagesController.sendMsg));
 
   return router;
 }

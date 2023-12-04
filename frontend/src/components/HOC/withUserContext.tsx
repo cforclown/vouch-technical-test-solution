@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { IUserContext } from '@/store/reducers/user-context';
 import Loader from '../loader/Loader.style';
-import { selectUserContext } from '@/store/reducers/user-context/user-context-selector';
+import { selectUserContext } from '@/store/reducers/user-context/user-context-selectors';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 

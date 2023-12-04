@@ -1,8 +1,14 @@
 export const MessagesSwaggerSchemas = {
+  startConversation: {
+    type: 'object',
+    properties: {
+      receiver: { type: 'string', required: true },
+      text: { type: 'string', required: true }
+    }
+  },
   sendMsg: {
     type: 'object',
     properties: {
-      channel: { type: 'string', required: true },
       text: { type: 'string', required: true }
     }
   },

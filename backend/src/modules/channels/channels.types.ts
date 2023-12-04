@@ -20,10 +20,10 @@ export const isValidChannelType = (channelType: string): channelType is Channels
 export interface IChannel extends Document {
   _id: Types.ObjectId;
   id: string;
-  name: string;
+  name?: string; // only when type==='group'
   type: ChannelsTypes;
   desc?: string;
-  users: IUser[] | Types.ObjectId;
+  users: IUser[] | Types.ObjectId[];
   roles?: IChannelUserRole[]; //  undefined if type==='dm'
   messages: IMessage[];
   createdAt?: Date;
@@ -31,19 +31,24 @@ export interface IChannel extends Document {
   archived?: boolean;
 }
 
-export type ICreateChannelPayload = {
-  name: string;
-  type: ChannelsTypes;
-  desc?: string;
-  users: IUser[] | Types.ObjectId;
-  roles?: IChannelUserRole[]; //  undefined if type==='dm'
+export type ICreateDmChannel = {
+  type: 'dm',
+  users: [Types.ObjectId, Types.ObjectId];
 };
 
-export type ICreateGroupChannelPayload = Omit<ICreateChannelPayload, 'type'>
+export type ICreateGroupChannel = {
+  type: 'group',
+  users: Types.ObjectId[];
+  roles: IChannelUserRole;
+};
 
-export interface IUpdateChannelPayload {
+export type IUpdateChannel = {
+  id: string;
   name?: string;
   desc?: string;
-  users?: string[]; // only allowed to update users (add/remove) if type is 'group'
-  roles?: IChannelUserRole[]; // only allowed to update roles (add/remove) if type is 'group'
-}
+  users?: string[];
+  roles?: {
+    user: string;
+    role: EChannelRoles;
+  }[]
+};

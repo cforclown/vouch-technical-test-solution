@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { PulseLoader } from 'react-spinners';
 import { LoaderSizeMarginProps } from 'react-spinners/helpers/props';
-import { selectThemeMain } from '@/store/reducers/layout/theme-selector';
+import { selectThemeMain } from '@/store/reducers/layout/theme-selectors';
 
 export interface ISpinner extends LoaderSizeMarginProps {
   className?: string

@@ -54,7 +54,7 @@ export const Environment = {
   getAccessTokenSecret: (): string => getEnvOrThrow('ACCESS_TOKEN_SECRET'),
   getRefreshTokenSecret: (): string => getEnvOrThrow('REFRESH_TOKEN_SECRET'),
   getAccessTokenExpIn: (): number => {
-    const accessTokenExpIn = getOptionalEnv('ACCESS_TOKEN_EXP_IN', 7200);
+    const accessTokenExpIn = getOptionalEnv('ACCESS_TOKEN_EXP_IN', 900000);
     return typeof accessTokenExpIn === 'string' ? parseInt(accessTokenExpIn) : accessTokenExpIn;
   },
   getRefreshTokenExpIn: (): string => '7d',

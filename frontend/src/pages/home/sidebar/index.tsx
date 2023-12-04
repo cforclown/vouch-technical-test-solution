@@ -1,13 +1,16 @@
-import { ComponentType, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Menu, MenuItem, Sidebar as ReactProSidebar, menuClasses } from 'react-pro-sidebar';
-import { matchPath, useNavigate } from 'react-router-dom';
-import { CalendarIcon } from '@radix-ui/react-icons';
-import { IconProps } from '@radix-ui/react-icons/dist/types';
-import { selectTheme } from '@/store/reducers/layout/theme-selector';
 import styled from 'styled-components';
+import { Menu, Sidebar as ReactProSidebar, menuClasses } from 'react-pro-sidebar';
+import { selectTheme } from '@/store/reducers/layout/theme-selectors';
+import SidebarHeader from './sidebar-header';
+import { IUser } from '@/utils/common';
+import withUserContext, { IWithUserContext } from '@/components/HOC/withUserContext';
+import { selectChannels } from '@/store/reducers/channels/channels-selectors';
+import { IChannel } from '@/store/reducers/channels';
+import SidebarItemChannel from './sidebar-item-channel';
 
-export interface ISidebar {
+export interface ISidebar extends IWithUserContext {
   collapsed: boolean;
   hidden: boolean;
   onBreakpoint(onBreakpoint: boolean): void;
@@ -21,8 +24,13 @@ const Container = styled(ReactProSidebar)`
 `;
 
 function Sidebar({ collapsed, onBreakpoint, onBackdropClick, hidden }: ISidebar): JSX.Element {
-  const theme = useSelector(selectTheme);
+  const theme = useSelector(selectTheme());
   const ismounted = useRef(false);
+  const channels = useSelector(selectChannels());
+  const normalizedChannels: (IChannel & { withUser?: IUser })[] = useMemo(() => channels.map(channel => ({
+    ...channel,
+    withUser: channel.type === 'group' ? undefined : channel.users.find(user => user.id !== user.id)
+  })), [channels]);
 
   useEffect(() => {
     ismounted.current = true;
@@ -42,17 +50,7 @@ function Sidebar({ collapsed, onBreakpoint, onBackdropClick, hidden }: ISidebar)
       backgroundColor={theme.sidebar.background}
     >
       <div className="h-screen flex flex-col justify-start items-start">
-        {/* HEADER */}
-        <div className="w-full overflow-hidden flex justify-center items-center my-2" style={{ height: '56px' }}>
-          <img
-            className="h-[90%]"
-            src={`/images/${collapsed ? 'sidebar-collapsed-banner.png' : 'sidebar-banner.png'}`}
-            style={{ 
-              objectFit: 'cover'
-            }}
-            alt="/images/sidebar-collapsed-banner.png"
-          />
-        </div>
+        <SidebarHeader collapsed={collapsed} />
 
         <Menu 
           className="w-full" 
@@ -71,30 +69,13 @@ function Sidebar({ collapsed, onBreakpoint, onBackdropClick, hidden }: ISidebar)
             },
           }}
         >
-          <SidebarMenuItem path="/schedules" icon={CalendarIcon} label="Schedules" />
+          {normalizedChannels.map((channel, i) => (
+            <SidebarItemChannel key={i} channel={channel} user={channel.withUser} />
+          ))}
         </Menu>
       </div>
     </Container>
   );
 }
 
-interface ISidebarMenuItem {
-  path: string;
-  icon?: ComponentType<IconProps>;
-  label: string;
-}
-function SidebarMenuItem({ path, icon: Icon }: ISidebarMenuItem): JSX.Element {
-  const navigate = useNavigate();
-
-  return (
-    <MenuItem 
-      active={!!matchPath(`${path}/*`, location.pathname)} 
-      icon={Icon ? <Icon height={20} width={20}/> : undefined}
-      onClick={() => navigate(`${path}`)}
-    >
-      Schedules
-    </MenuItem>
-  );
-}
-
-export default Sidebar;
+export default withUserContext(Sidebar);

@@ -6,19 +6,19 @@ export interface IExplorationPayload {
   pagination: IPaginationPayload;
 }
 
-export interface IExplorationResponse<T> {
+export const explorationPayloadSchema = Joi.object<IExplorationPayload>({
+  query: Joi.string().allow(null, '').default(null),
+  pagination: PaginationDto.required()
+});
+
+export interface IExplorationRes<T> {
   data: T[],
   exploration: IExplorationPayload & {
     pagination: IPaginationResponse
   }
 }
 
-export const ExplorationPayloadSchema = Joi.object({
-  query: Joi.string().allow(null, '').default(null),
-  pagination: PaginationDto.required()
-});
-
-export const ExplorationSwaggerSchemas = {
+export const explorationSwaggerSchemas = {
   explorationPayload: {
     query: { type: 'string' },
     pagination: { ...PaginationPayloadSwaggerSchemas }

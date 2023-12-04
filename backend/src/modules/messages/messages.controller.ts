@@ -1,7 +1,9 @@
 import { Request } from 'express';
 import { IMessage } from './messages.types';
 import { MessagesService } from './messages.service';
-import { IExplorationResponse } from '../../utils';
+import { IExplorationRes, RestApiException } from '../../utils';
+import { IUser } from '../users';
+import { IChannel } from '../channels';
 
 export class MessagesController {
   public static readonly INSTANCE_NAME = 'messagesController';
@@ -10,10 +12,26 @@ export class MessagesController {
 
   constructor (messagesService: MessagesService) {
     this.messagesService = messagesService;
-    this.explore = this.explore.bind(this);
+
+    this.getMsgs = this.getMsgs.bind(this);
+    this.startConversation = this.startConversation.bind(this);
+    this.sendMsg = this.sendMsg.bind(this);
   }
 
-  async explore ({ params, body }: Request): Promise<IExplorationResponse<IMessage>> {
-    return this.messagesService.explore(params.id, body);
+  async getMsgs ({ params, body }: Request): Promise<IExplorationRes<IMessage>> {
+    return this.messagesService.getMsgs(params.id, body);
+  }
+
+  async startConversation ({ user, body }: Request): Promise<IChannel> {
+    return this.messagesService.startConversation((user as IUser).id, body);
+  }
+
+  async sendMsg ({ user, params, body }: Request): Promise<IMessage | null> {
+    const msg = await this.messagesService.sendMsg(params.id, (user as IUser).id, body);
+    if (!msg) {
+      throw new RestApiException('Failed to send message');
+    }
+
+    return msg;
   }
 }

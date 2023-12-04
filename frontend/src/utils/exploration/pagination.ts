@@ -1,11 +1,11 @@
-export enum PaginationSortOrders {
+export enum EPaginationSortOrders {
   ASC = 1,
   DESC = -1
 }
 
 export interface IPaginationSort {
   by: string;
-  order?: PaginationSortOrders;
+  order?: EPaginationSortOrders;
 }
 
 export interface IPaginationPayload {

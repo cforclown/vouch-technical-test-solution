@@ -1,19 +1,85 @@
-import { ChannelsDao, IChannel } from '.';
-import { IExplorationPayload, IExplorationResponse } from '../../utils';
-import { BaseService } from '../../utils/base/base-service';
+import { some } from 'lodash';
+import { ChannelsDao, IChannel, ICreateDmChannel, ICreateGroupDto, IUpdateChannel, IUpdateGroupDto } from '.';
+import { BaseService, IExplorationPayload, IExplorationRes, RestApiException } from '../../utils';
+import { IUser, UsersService } from '../users';
+import { IMessage } from '../messages';
+import { Types } from 'mongoose';
 
 export class ChannelsService extends BaseService<IChannel> {
   public static readonly INSTANCE_NAME = 'channelsService';
 
   private readonly channelsDao: ChannelsDao;
+  private readonly usersService: UsersService;
 
-  constructor (channelsDao: ChannelsDao) {
+  constructor (channelsDao: ChannelsDao, usersService: UsersService) {
     super(channelsDao);
 
     this.channelsDao = channelsDao;
+    this.usersService = usersService;
   }
 
-  async explore (payload: IExplorationPayload): Promise<IExplorationResponse<IChannel>> {
+  async explore (payload: IExplorationPayload): Promise<IExplorationRes<IChannel>> {
     return this.channelsDao.explore(payload);
+  }
+
+  async createDm (users: [string, string]): Promise<IChannel> {
+    const usersDocs = await Promise.all(users.map(user => this.usersService.get(user)));
+    if (some(usersDocs, user => !user)) {
+      throw new RestApiException('Some user id is invalid');
+    }
+
+    const dmChannel: ICreateDmChannel = {
+      type: 'dm',
+      users: usersDocs.map(user => new Types.ObjectId((user as IUser).id)) as [Types.ObjectId, Types.ObjectId]
+    };
+
+    return this.create(dmChannel);
+  }
+
+  async createGroup (user: string, payload: ICreateGroupDto): Promise<IChannel> {
+    const usersDocs = await Promise.all(payload.users.map(user => this.usersService.get(user)));
+    if (some(usersDocs, user => !user)) {
+      throw new RestApiException('Some user id is invalid');
+    }
+
+    const users = [user, ...payload.users.filter(u => u !== user)];
+    const groupChannel: ICreateGroupDto & { type: 'group' } = {
+      ...payload,
+      type: 'group',
+      users
+    };
+
+    return this.create(groupChannel);
+  }
+
+  async updateGroup (channel: string, payload: IUpdateGroupDto): Promise<IChannel | null> {
+    if (payload.roles) {
+      const [channelDoc, ...usersDocs] = await Promise.all([this.get(channel), ...payload.roles.map(role => this.usersService.get(role.user))]);
+      if (!channelDoc) {
+        throw new RestApiException('Channel not found');
+      }
+      if (some(usersDocs, user => !user) || some(payload.roles, role => !usersDocs.find(u => u?.id === role.user))) {
+        throw new RestApiException('Some roles assign to invalid user id');
+      }
+    }
+
+    const groupChannel: IUpdateChannel = {
+      id: channel,
+      ...payload
+    };
+
+    return this.update(groupChannel);
+  }
+
+  async pushMsg (channel: string, msg: IMessage): Promise<IMessage | null> {
+    return this.channelsDao.pushMsg(channel, msg);
+  }
+
+  async editMsg (channel: string, msgId: string, text: string): Promise<IMessage | null> {
+    return this.channelsDao.editMsg(channel, msgId, text);
+  }
+
+  async getMsgs (channel: string, exploration: IExplorationPayload): Promise<IExplorationRes<IMessage>> {
+    return this.channelsDao.getMsgs(channel, exploration);
   }
 }

@@ -12,10 +12,11 @@
       "cancel": "Batal",
       "confirm": "Konfirmasi",
       "areYouSure": "Apakah Anda yakin?",
-      "deletedSuccessfully": "Berhasil dihapus"
-    },
-    "schedules": {
-      "schedules": "Jadwal"
+      "deletedSuccessfully": "Berhasil dihapus",
+      "account": "Akun",
+      "profile": "Profil",
+      "settings": "Settings",
+      "logout": "Logout"
     }
   }
 }
