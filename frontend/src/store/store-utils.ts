@@ -2,7 +2,7 @@
 import { toast } from 'react-toastify';
 import { CallEffect, call } from 'redux-saga/effects';
 import { HttpStatusCode } from 'axios';
-import { CallAPIException } from './call-api';
+import { CallAPIException } from '../utils/call-api';
 
 type SagaFunction<Args extends any[]> = (...args: Args) => Generator<any, any, any>;
 

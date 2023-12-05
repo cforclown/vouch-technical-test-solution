@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { UsersController } from './users.controller';
-import { RequestHandler, validateBody, validateParams } from '../../utils';
+import { RequestHandler, validateBody, validateParams, validateQuery } from '../../utils';
 import { idSchema } from '../../schemas';
 import { UpdateUserPayloadSchema } from './users.dto';
+import Joi from 'joi';
 
 export const USERS_ROUTER_INSTANCE_NAME = 'usersRouter';
 export const USERS_BASE_API_PATH = 'users';
@@ -42,7 +43,7 @@ export function UsersRouter (usersController:UsersController): Router {
    *          security:
    *              - Bearer: []
    */
-  router.get('/', RequestHandler(usersController.getAll));
+  router.get('/', validateQuery(Joi.object({ query: Joi.string().required() })), RequestHandler(usersController.getAll));
 
   /**
    * @swagger

@@ -30,6 +30,7 @@ const userContextSlice = createSlice({
     },
     deleteUserContext(state) {
       state.context = undefined;
+      storageService('local').remove(USER_CONTEXT_STORAGE_KEY);
     }
   }
 });

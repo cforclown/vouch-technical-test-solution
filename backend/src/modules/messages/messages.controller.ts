@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { IMessage } from './messages.types';
 import { MessagesService } from './messages.service';
-import { IExplorationRes, RestApiException } from '../../utils';
+import { RestApiException } from '../../utils';
 import { IUser } from '../users';
 import { IChannel } from '../channels';
 
@@ -18,8 +18,13 @@ export class MessagesController {
     this.sendMsg = this.sendMsg.bind(this);
   }
 
-  async getMsgs ({ params, body }: Request): Promise<IExplorationRes<IMessage>> {
-    return this.messagesService.getMsgs(params.id, body);
+  async getMsgs ({ params }: Request): Promise<IMessage[]> {
+    const msgs = await this.messagesService.getMsgs(params.id);
+    if (!msgs) {
+      throw new RestApiException('Invalid channel id');
+    }
+
+    return msgs;
   }
 
   async startConversation ({ user, body }: Request): Promise<IChannel> {

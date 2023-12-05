@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 import { IEditMsgPayload, IMessage, ISendMsgPayload, IStartConversationPayload } from '.';
-import { IExplorationPayload, IExplorationRes } from '../../utils';
 import { ChannelsService, IChannel } from '../channels';
 
 export class MessagesService {
@@ -12,8 +11,8 @@ export class MessagesService {
     this.channelsService = channelsService;
   }
 
-  async getMsgs (channel: string, exploration: IExplorationPayload): Promise<IExplorationRes<IMessage>> {
-    return this.channelsService.getMsgs(channel, exploration);
+  async getMsgs (channel: string): Promise<IMessage[] | null> {
+    return this.channelsService.getMsgs(channel);
   }
 
   // user send message to another for the first time (no channel yet)

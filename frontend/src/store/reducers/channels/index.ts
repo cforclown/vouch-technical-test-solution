@@ -1,8 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import { IUser } from '@/utils/common';
-import { IExplorationResConfig } from '@/utils/exploration/exploration';
-import { EPaginationSortOrders } from '@/utils/exploration/pagination';
 
 export enum EChannelRoles {
   OWNER='owner',
@@ -43,27 +41,12 @@ export interface IChannel {
 export interface IChannelsState {
   loading: boolean;
   channels: IChannel[];
-  exploration: IExplorationResConfig;
-  msgsLoading: boolean;
-  msgs: IMessage[];
+  selectedChannel?: IChannel;
 }
 
 const channelsInitialState: IChannelsState = {
-  loading: false,
+  loading: true,
   channels: [],
-  exploration: {  
-    pagination: {
-      page: 1,
-      limit: 25,
-      sort: {
-        by: 'createdAt',
-        order: EPaginationSortOrders.DESC
-      },
-      pageCount: 0
-    } 
-  },
-  msgsLoading: true,
-  msgs: []
 };
 
 
@@ -74,32 +57,19 @@ const channelsSlice = createSlice({
     setChannelsLoading(state, action) {
       state.loading = action.payload;
     },
-    setChannelsData(state, action) {
+    setChannels(state, action) {
       state.channels = action.payload;
     },
-    setExploration(state, action) {
-      state.exploration = action.payload;
-    },
-    resetExploration(state) {
-      state.exploration = {
-        pagination: {
-          page: 1,
-          limit: 25,
-          sort: {
-            by: 'createdAt',
-            order: EPaginationSortOrders.DESC
-          },
-          pageCount: 1
-        } 
-      };
+    setSelectedChannel(state, action) {
+      state.selectedChannel = { ...action.payload };
     }
   }
 });
 
 export const { 
   setChannelsLoading, 
-  setChannelsData,
-  setExploration
+  setChannels,
+  setSelectedChannel
 } = channelsSlice.actions;
 
 export default channelsSlice.reducer;

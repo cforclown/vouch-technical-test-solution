@@ -14,9 +14,14 @@ export class ChannelsController extends BaseController<IChannel> {
     super(channelsService);
     this.channelsService = channelsService;
 
+    this.getUserChannels = this.getUserChannels.bind(this);
     this.explore = this.explore.bind(this);
     this.createGroup = this.createGroup.bind(this);
     this.updateGroup = this.updateGroup.bind(this);
+  }
+
+  async getUserChannels ({ user }: Request): Promise<IChannel[]> {
+    return this.channelsService.getUserChannels((user as IUser).id);
   }
 
   async explore ({ body }: Request): Promise<IExplorationRes<IChannel>> {

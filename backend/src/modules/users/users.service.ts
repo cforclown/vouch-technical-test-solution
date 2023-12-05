@@ -21,8 +21,8 @@ export class UsersService {
     return this.usersDao.get(userId);
   }
 
-  getAll (): Promise<IUser[]> {
-    return this.usersDao.getAll();
+  getAll (query: string): Promise<IUser[]> {
+    return this.usersDao.getAll(query);
   }
 
   async create (payload: ICreateUserPayload): Promise<IUser> {

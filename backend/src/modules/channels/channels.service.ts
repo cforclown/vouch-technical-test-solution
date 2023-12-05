@@ -1,9 +1,9 @@
+import { Types } from 'mongoose';
 import { some } from 'lodash';
 import { ChannelsDao, IChannel, ICreateDmChannel, ICreateGroupDto, IUpdateChannel, IUpdateGroupDto } from '.';
 import { BaseService, IExplorationPayload, IExplorationRes, RestApiException } from '../../utils';
 import { IUser, UsersService } from '../users';
 import { IMessage } from '../messages';
-import { Types } from 'mongoose';
 
 export class ChannelsService extends BaseService<IChannel> {
   public static readonly INSTANCE_NAME = 'channelsService';
@@ -16,6 +16,10 @@ export class ChannelsService extends BaseService<IChannel> {
 
     this.channelsDao = channelsDao;
     this.usersService = usersService;
+  }
+
+  async getUserChannels (user: string): Promise<IChannel[]> {
+    return this.channelsDao.getUserChannels(user);
   }
 
   async explore (payload: IExplorationPayload): Promise<IExplorationRes<IChannel>> {
@@ -33,7 +37,7 @@ export class ChannelsService extends BaseService<IChannel> {
       users: usersDocs.map(user => new Types.ObjectId((user as IUser).id)) as [Types.ObjectId, Types.ObjectId]
     };
 
-    return this.create(dmChannel);
+    return this.channelsDao.createChannel(dmChannel, true);
   }
 
   async createGroup (user: string, payload: ICreateGroupDto): Promise<IChannel> {
@@ -49,7 +53,7 @@ export class ChannelsService extends BaseService<IChannel> {
       users
     };
 
-    return this.create(groupChannel);
+    return this.channelsDao.createChannel(groupChannel, true);
   }
 
   async updateGroup (channel: string, payload: IUpdateGroupDto): Promise<IChannel | null> {
@@ -79,7 +83,7 @@ export class ChannelsService extends BaseService<IChannel> {
     return this.channelsDao.editMsg(channel, msgId, text);
   }
 
-  async getMsgs (channel: string, exploration: IExplorationPayload): Promise<IExplorationRes<IMessage>> {
-    return this.channelsDao.getMsgs(channel, exploration);
+  async getMsgs (channel: string): Promise<IMessage[] | null> {
+    return this.channelsDao.getMsgs(channel);
   }
 }

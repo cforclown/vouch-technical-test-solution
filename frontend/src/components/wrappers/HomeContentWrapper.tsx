@@ -7,7 +7,7 @@ export interface IContentWrapper {
   className?: string;
 }
 
-function DashboardContentWrapper({ loading, className, children }: PropsWithChildren<IContentWrapper>) {
+function HomeContentWrapper({ loading, className, children }: PropsWithChildren<IContentWrapper>) {
   return (
     <>
       <div className={twMerge('relative w-full p-4', className)}>
@@ -20,4 +20,4 @@ function DashboardContentWrapper({ loading, className, children }: PropsWithChil
   );
 }
 
-export default DashboardContentWrapper;
+export default HomeContentWrapper;

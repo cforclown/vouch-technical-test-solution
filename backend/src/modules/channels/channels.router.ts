@@ -38,7 +38,7 @@ export function ChannelsRouter (channelsController: ChannelsController): Router 
    *              '200':
    *                  description: OK
    */
-  router.get('/', RequestHandler(channelsController.getAll));
+  router.get('/', RequestHandler(channelsController.getUserChannels));
 
   /**
    * @swagger

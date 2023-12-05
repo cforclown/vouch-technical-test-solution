@@ -44,6 +44,16 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
+    if (!userContext) {
+      navigate('/auth/login');
+    }
+  }, [userContext]);
+
   if (loading) {
     return ( <Loader />);
   }

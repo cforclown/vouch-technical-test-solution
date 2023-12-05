@@ -6,6 +6,7 @@ export interface IUser {
   email?: string | null;
   avatar?: string;
 }
+
 export interface IAccessToken {
   user: IUser;
   accessToken: string;

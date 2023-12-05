@@ -8,7 +8,7 @@ export interface ISidebarState {
 }
 
 export interface ILayoutState {
-  isSM?: boolean;
+  isSm?: boolean;
   sidebarState: ISidebarState;
   theme: ITheme;
 }
@@ -27,7 +27,7 @@ const layoutSlice = createSlice({
   initialState: layoutInitialState,
   reducers: {
     setIsSM(state, action) {
-      state.isSM = action.payload;
+      state.isSm = action.payload;
     },
     showSidebar(state) {
       state.sidebarState.hidden = false;

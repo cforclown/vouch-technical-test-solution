@@ -9,6 +9,7 @@ import withUserContext, { IWithUserContext } from '@/components/HOC/withUserCont
 import { selectChannels } from '@/store/reducers/channels/channels-selectors';
 import { IChannel } from '@/store/reducers/channels';
 import SidebarItemChannel from './sidebar-item-channel';
+import SidebarFooter from './sidebar-footer';
 
 export interface ISidebar extends IWithUserContext {
   collapsed: boolean;
@@ -23,13 +24,13 @@ const Container = styled(ReactProSidebar)`
   box-shadow: 1px 3px 6px #00000040;
 `;
 
-function Sidebar({ collapsed, onBreakpoint, onBackdropClick, hidden }: ISidebar): JSX.Element {
+function Sidebar({ userContext: { user }, collapsed, onBreakpoint, onBackdropClick, hidden }: ISidebar): JSX.Element {
   const theme = useSelector(selectTheme());
   const ismounted = useRef(false);
   const channels = useSelector(selectChannels());
   const normalizedChannels: (IChannel & { withUser?: IUser })[] = useMemo(() => channels.map(channel => ({
     ...channel,
-    withUser: channel.type === 'group' ? undefined : channel.users.find(user => user.id !== user.id)
+    withUser: channel.type === 'dm' ? channel.users.find(u => u.id !== user.id) : undefined
   })), [channels]);
 
   useEffect(() => {
@@ -52,27 +53,31 @@ function Sidebar({ collapsed, onBreakpoint, onBackdropClick, hidden }: ISidebar)
       <div className="h-screen flex flex-col justify-start items-start">
         <SidebarHeader collapsed={collapsed} />
 
-        <Menu 
-          className="w-full" 
-          menuItemStyles={{
-            button: {
-              color: theme.sidebar.color,
-              backgroundColor: theme.sidebar.background,
-              '&:hover': {
-                color: theme.sidebar.itemActiveColor ?? theme.sidebar.color,
-                backgroundColor: theme.sidebar.itemActiveBg ?? theme.sidebar.itemActiveBg,
+        <div className="w-full h-full flex flex-col justify-between">
+          <Menu 
+            className="w-full" 
+            menuItemStyles={{
+              button: {
+                color: theme.sidebar.color,
+                backgroundColor: theme.sidebar.background,
+                '&:hover': {
+                  color: theme.sidebar.itemActiveColor ?? theme.sidebar.color,
+                  backgroundColor: theme.sidebar.itemActiveBg ?? theme.sidebar.itemActiveBg,
+                },
+                [`&.${menuClasses.active}`]: {
+                  color: theme.sidebar.itemActiveColor ?? theme.sidebar.color,
+                  backgroundColor: theme.sidebar.itemActiveBg ?? theme.sidebar.itemActiveBg,
+                },
               },
-              [`&.${menuClasses.active}`]: {
-                color: theme.sidebar.itemActiveColor ?? theme.sidebar.color,
-                backgroundColor: theme.sidebar.itemActiveBg ?? theme.sidebar.itemActiveBg,
-              },
-            },
-          }}
-        >
-          {normalizedChannels.map((channel, i) => (
-            <SidebarItemChannel key={i} channel={channel} user={channel.withUser} />
-          ))}
-        </Menu>
+            }}
+          >
+            {normalizedChannels.map((channel, i) => (
+              <SidebarItemChannel key={i} channel={channel} user={channel.withUser} />
+            ))}
+          </Menu>
+
+          <SidebarFooter />
+        </div>
       </div>
     </Container>
   );

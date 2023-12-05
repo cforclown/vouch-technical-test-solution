@@ -1,6 +1,6 @@
 import { IChannel } from './channels.types';
 import { BaseDataAccessObject } from '../../utils/base/base-dao-mongo';
-import { model } from 'mongoose';
+import { model, Types } from 'mongoose';
 import { IExplorationPayload, IExplorationRes } from '../../utils';
 import { IMessage } from '../messages';
 
@@ -10,6 +10,32 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
 
   constructor () {
     super(model<IChannel>(ChannelsDao.MODEL_NAME));
+  }
+
+  async createChannel (payload: Record<string, any> & { id?: string | undefined; }, populateUsers?: boolean): Promise<IChannel> {
+    const createdChannel = await this.create(payload);
+    if (!populateUsers) {
+      return createdChannel;
+    }
+
+    const channel = await this.model.findById(createdChannel).populate('users').exec();
+    if (!channel) {
+      throw new Error('Unexpected error occured when creating channel');
+    }
+
+    return channel;
+  }
+
+  async getUserChannels (user: string): Promise<IChannel[]> {
+    return this.model
+      .find({
+        users: new Types.ObjectId(user),
+        archived: false
+      })
+      .populate('users')
+      .select('-messages')
+      .sort({ updatedAt: 'descending' })
+      .exec();
   }
 
   async explore ({ query, pagination }: IExplorationPayload): Promise<IExplorationRes<IChannel>> {
@@ -68,9 +94,14 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
   }
 
   async pushMsg (channel: string, msg: IMessage): Promise<IMessage | null> {
-    return this.model.findOneAndUpdate({ _id: channel }, {
+    const channelDoc = await this.model.findOneAndUpdate({ _id: channel }, {
       $push: { messages: msg }
     }, { new: true });
+    if (!channelDoc) {
+      return null;
+    }
+
+    return msg;
   }
 
   async editMsg (channel: string, msgId: string, text: string): Promise<IMessage | null> {
@@ -89,16 +120,15 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
     return msgDoc;
   }
 
-  async getMsgs (channel: string, exploration: IExplorationPayload): Promise<IExplorationRes<IMessage>> {
-    return {
-      data: [],
-      exploration: {
-        ...exploration,
-        pagination: {
-          ...exploration.pagination,
-          pageCount: 1
-        }
-      }
-    };
+  async getMsgs (channel: string): Promise<IMessage[] | null> {
+    const channelDoc = await this.model
+      .findOne({ _id: channel, archived: false })
+      .sort({ createdAt: 'descending' })
+      .exec();
+    if (!channelDoc) {
+      return null;
+    }
+
+    return channelDoc.messages;
   }
 }

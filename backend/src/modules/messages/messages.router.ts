@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { MessagesController } from './messages.controller';
-import { explorationPayloadSchema, RequestHandler, validateBody, validateParams } from '../../utils';
+import { RequestHandler, validateBody, validateParams } from '../../utils';
 import { sendMsgPayloadSchema, startConversationPayloadSchema } from './messages.dto';
 import { idSchema } from '../../schemas';
 
-export const ROUTER_INSTANCE_NAME = 'messagesRouter';
-export const BASE_API_PATH = 'messages';
+export const MESSAGES_ROUTER_INSTANCE_NAME = 'messagesRouter';
+export const MESSAGES_BASE_API_PATH = 'messages';
 
 export function MessagesRouter (messagesController: MessagesController): Router {
   const router = Router();
@@ -16,23 +16,21 @@ export function MessagesRouter (messagesController: MessagesController): Router 
    *      post:
    *          tags:
    *              - Messages
-   *          description: Explore messages with pagination
+   *          description: Get channel all messages
    *          responses:
    *              '200':
    *                  description: OK
-   *          requestBody:
-   *              description: "Exploration payload"
-   *              required: true
-   *              content:
-   *                  application/json:
-   *                      schema:
-   *                          $ref: '#/components/schemas/explorationPayload'
+   *          parameters:
+   *              -   name: id
+   *                  in: path
+   *                  description: Channel id
+   *                  required: true
    */
-  router.post('/', validateBody(explorationPayloadSchema), RequestHandler(messagesController.getMsgs));
+  router.get('/:id', validateParams(idSchema), RequestHandler(messagesController.getMsgs));
 
   /**
    * @swagger
-   * /api/v1/messages:
+   * /api/v1/messages/new:
    *      post:
    *          tags:
    *              - Messages
@@ -48,7 +46,7 @@ export function MessagesRouter (messagesController: MessagesController): Router 
    *                      schema:
    *                          $ref: '#/components/schemas/sendMsg'
    */
-  router.put('/', validateBody(startConversationPayloadSchema), RequestHandler(messagesController.startConversation));
+  router.post('/new', validateBody(startConversationPayloadSchema), RequestHandler(messagesController.startConversation));
 
   /**
    * @swagger

@@ -9,6 +9,10 @@ import {
   ChannelsDao,
   ChannelsRouter,
   ChannelsService,
+  MESSAGES_ROUTER_INSTANCE_NAME,
+  MessagesController,
+  MessagesRouter,
+  MessagesService,
   USERS_ROUTER_INSTANCE_NAME,
   UsersController,
   UsersDao,
@@ -44,6 +48,9 @@ export function setup (): void {
     [CHANNELS_ROUTER_INSTANCE_NAME]: asFunction(ChannelsRouter),
     [ChannelsController.INSTANCE_NAME]: asClass(ChannelsController),
     [ChannelsService.INSTANCE_NAME]: asClass(ChannelsService),
-    channelsDao: asClass(ChannelsDao)
+    channelsDao: asClass(ChannelsDao),
+    [MESSAGES_ROUTER_INSTANCE_NAME]: asFunction(MessagesRouter),
+    [MessagesController.INSTANCE_NAME]: asClass(MessagesController),
+    [MessagesService.INSTANCE_NAME]: asClass(MessagesService)
   });
 }

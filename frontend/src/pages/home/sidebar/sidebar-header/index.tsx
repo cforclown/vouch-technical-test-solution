@@ -8,7 +8,7 @@ export interface ISidebarHeaderProps extends IWithUserContext {
 
 function SidebarHeader({ collapsed, userContext: { user } }: ISidebarHeaderProps): JSX.Element {
   return (
-    <div className="w-full h-[68px] bg-[#FFFFFF22] flex flex-row justify-center items-center gap-3">
+    <div className="w-full h-[68px] bg-[#FFFFFF22] flex flex-row justify-center items-center gap-2">
       <div className="cursor-pointer">
         <UserAvatar src={user.avatar} size="lg" />
       </div>

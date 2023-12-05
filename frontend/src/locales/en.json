@@ -16,7 +16,10 @@
       "account": "Account",
       "profile": "Profile",
       "settings": "Settings",
-      "logout": "Logout"
+      "logout": "Logout",
+      "startChattingWithSomeone": "Start chatting with someone",
+      "chat": "Chat",
+      "findUSers": "Find users"
     }
   }
 }

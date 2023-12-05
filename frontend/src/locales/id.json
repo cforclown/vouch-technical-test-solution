@@ -16,7 +16,10 @@
       "account": "Akun",
       "profile": "Profil",
       "settings": "Settings",
-      "logout": "Logout"
+      "logout": "Logout",
+      "startChattingWithSomeone": "Mulai ngobrol dengan seseorang",
+      "chat": "Chat",
+      "findUSers": "Temukan user lain"
     }
   }
 }

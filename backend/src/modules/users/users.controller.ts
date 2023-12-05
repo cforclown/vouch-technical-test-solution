@@ -26,8 +26,8 @@ export class UsersController {
     return user;
   }
 
-  async getAll (): Promise<IUser[]> {
-    return this.usersService.getAll();
+  async getAll ({ query }: Request): Promise<IUser[]> {
+    return this.usersService.getAll((query as Record<string, any>).query);
   }
 
   async update ({ user, body }: Request): Promise<IUser> {

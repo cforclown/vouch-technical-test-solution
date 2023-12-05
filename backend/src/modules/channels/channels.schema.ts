@@ -6,7 +6,7 @@ import { messagesSchema } from '../messages';
 export const CHANNELS_COLLECTION_NAME = 'channels';
 
 export const channelsSchema = new Schema<IChannel>({
-  name: { type: String, required: true },
+  name: { type: String },
   type: {
     type: String,
     enum: [...channelTypes],

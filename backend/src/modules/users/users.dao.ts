@@ -43,8 +43,14 @@ export class UsersDao {
     return this.model.findOne({ email, archived: false }).select('-password').exec();
   }
 
-  async getAll (): Promise<IUser[]> {
-    return this.model.find({ archived: false }).exec();
+  async getAll (query: string): Promise<IUser[]> {
+    return this.model.find({
+      $or: [
+        { fullname: { $regex: query, $options: 'i' } },
+        { username: { $regex: query, $options: 'i' } }
+      ],
+      archived: false
+    }).exec();
   }
 
   async create (payload: ICreateUserPayload): Promise<IUser> {

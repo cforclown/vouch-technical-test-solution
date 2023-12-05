@@ -4,6 +4,7 @@ export interface IStorageService {
   setString: (key: string, value: string) => void;
   getObject: <T>(key: string) => T | null;
   setObject: (key: string, value: any) => void;
+  remove: (key: string) => void;
 }
 
 const storageService = (type: StorageType): IStorageService => {
@@ -22,6 +23,9 @@ const storageService = (type: StorageType): IStorageService => {
       
       return value;
     },
+    remove: (key: string): void => {
+      window[storageType].removeItem(key);
+    }
   };
 };
 
