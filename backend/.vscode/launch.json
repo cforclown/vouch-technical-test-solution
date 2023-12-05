@@ -13,9 +13,6 @@
       "program": "${workspaceFolder}/src/index.ts",
       "restart": true,
       "runtimeExecutable": "nodemon",
-      "env": {
-        "NODE_ENV": "development"
-      },
       "skipFiles": [
         "<node_internals>/**"
       ]

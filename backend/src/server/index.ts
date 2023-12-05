@@ -35,10 +35,8 @@ export default class Server {
       container.register(IO_INSTANCE_NAME, asValue(sio));
       Logger.success('| ⚡️ SOCKET.IO STARTED SUCCESSFULLY');
       Logger.success('============================================================================');
-    } catch (err) {
-      if (err instanceof Error) {
-        Logger.error(err.message);
-      }
+    } catch (err: any) {
+      Logger.exception(err);
     }
   }
 }

@@ -1,13 +1,11 @@
 import Server from './server';
 import { setup } from './di-config';
-import { config, ELogLevel, Logger } from './utils';
+import { config, Logger } from './utils';
 
 try {
-  setup();
   config();
+  setup();
   new Server().start();
-} catch (err) {
-  if (err instanceof Error) {
-    Logger.error(err.message, ELogLevel.ERROR);
-  }
+} catch (err: any) {
+  Logger.exception(err);
 }

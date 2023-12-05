@@ -53,7 +53,7 @@ export const config = (): any => {
 
   const envFilename = getEnvFilename(process.env.NODE_ENV);
   if (!envFilename) {
-    Logger.warn(`[WARNING] NODE_ENV specified (${process.env.NODE_ENV} but env file not found.\n Ignore this warning if intended`, ELogLevel.DEBUG);
+    Logger.warn(`[WARNING] NODE_ENV specified ([${process.env.NODE_ENV}] but env file not found.\n Ignore this warning if intended`, ELogLevel.DEBUG);
   }
 
   dotenvConfig({ path: envFilename });
