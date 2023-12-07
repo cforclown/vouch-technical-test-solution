@@ -25,11 +25,8 @@ export interface IReducerActionWithoutPayload {
 
 export type IReducerAction<T=undefined> = T extends any ? IReducerActionWithPayload<T> : IReducerActionWithoutPayload
 
-export const SizeBreakpointNames = [ 'xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl' ] as const;
-export type SizeBreakpoints = typeof SizeBreakpointNames[number];
-
-export const ColorBreakpointNames = [ 'primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark', 'muted', 'white' ] as const;
-export type ColorBreakpoints = typeof ColorBreakpointNames[number];
+export const sizeBreakpointNames = [ 'xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl' ] as const;
+export type SizeBreakpoints = typeof sizeBreakpointNames[number];
 
 
 export const LG_BREAKPOINT = 992;

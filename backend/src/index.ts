@@ -1,6 +1,7 @@
-import Server from './server';
+// Dont change the order of the imports
 import { setup } from './di-config';
 import { config, Logger } from './utils';
+import Server from './server';
 
 try {
   config();

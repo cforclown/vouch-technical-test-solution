@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Menu, Sidebar as ReactProSidebar, menuClasses } from 'react-pro-sidebar';
+import { Sidebar as ReactProSidebar } from 'react-pro-sidebar';
 import { selectTheme } from '@/store/reducers/layout/theme-selectors';
 import SidebarHeader from './sidebar-header';
 import { IUser } from '@/utils/common';
 import withUserContext, { IWithUserContext } from '@/components/HOC/withUserContext';
 import { selectChannels } from '@/store/reducers/channels/channels-selectors';
 import { IChannel } from '@/store/reducers/channels';
-import SidebarItemChannel from './sidebar-item-channel';
 import SidebarFooter from './sidebar-footer';
+import SidebarContentChannels from './sidebar-content/sidebar-content-channels';
 
 export interface ISidebar extends IWithUserContext {
   collapsed: boolean;
@@ -20,7 +20,7 @@ export interface ISidebar extends IWithUserContext {
 }
 
 const Container = styled(ReactProSidebar)`
-  background-color: ${props => props.theme.sidebar.background};
+  background-color: ${props => props.theme.sidebar.bg};
   box-shadow: 1px 3px 6px #00000040;
 `;
 
@@ -48,36 +48,12 @@ function Sidebar({ userContext: { user }, collapsed, onBreakpoint, onBackdropCli
       onBreakPoint={onBreakpoint}
       onBackdropClick={onBackdropClick}
       breakPoint="sm"
-      backgroundColor={theme.sidebar.background}
+      backgroundColor={theme.sidebar.bg}
     >
       <div className="h-screen flex flex-col justify-start items-start">
         <SidebarHeader collapsed={collapsed} />
-
-        <div className="w-full h-full flex flex-col justify-between">
-          <Menu 
-            className="w-full" 
-            menuItemStyles={{
-              button: {
-                color: theme.sidebar.color,
-                backgroundColor: theme.sidebar.background,
-                '&:hover': {
-                  color: theme.sidebar.itemActiveColor ?? theme.sidebar.color,
-                  backgroundColor: theme.sidebar.itemActiveBg ?? theme.sidebar.itemActiveBg,
-                },
-                [`&.${menuClasses.active}`]: {
-                  color: theme.sidebar.itemActiveColor ?? theme.sidebar.color,
-                  backgroundColor: theme.sidebar.itemActiveBg ?? theme.sidebar.itemActiveBg,
-                },
-              },
-            }}
-          >
-            {normalizedChannels.map((channel, i) => (
-              <SidebarItemChannel key={i} channel={channel} user={channel.withUser} />
-            ))}
-          </Menu>
-
-          <SidebarFooter />
-        </div>
+        <SidebarContentChannels channels={normalizedChannels} />
+        <SidebarFooter />
       </div>
     </Container>
   );

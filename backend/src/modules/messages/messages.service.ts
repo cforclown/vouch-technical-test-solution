@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { IEditMsgPayload, IMessage, ISendMsgPayload, IStartConversationPayload } from '.';
-import { ChannelsService, IChannel } from '../channels';
+import { ChannelsService, IChannelRaw, IChannelRes } from '../channels';
 
 export class MessagesService {
   public static readonly INSTANCE_NAME = 'messagesService';
@@ -16,16 +16,23 @@ export class MessagesService {
   }
 
   // user send message to another for the first time (no channel yet)
-  async startConversation (sender: string, payload: IStartConversationPayload): Promise<IChannel> {
-    let channel: IChannel | null = await this.channelsService.createDm([sender, payload.receiver]);
-    await this.channelsService.pushMsg(channel.id, this.createMsgObj(channel.id, sender, payload.text));
-    channel = await this.channelsService.get(channel.id);
+  async startConversation (sender: string, payload: IStartConversationPayload): Promise<[IChannelRes, IMessage] | null> {
+    const channel = await this.channelsService.createDm([sender, payload.receiver]);
+    const result = await this.channelsService.pushMsg(channel.id, this.createMsgObj(channel.id, sender, payload.text), true);
+    if (!result) {
+      return null;
+    }
 
-    return channel as IChannel;
+    return result;
   }
 
-  async sendMsg (channel: string, sender: string, payload: ISendMsgPayload): Promise<IMessage | null> {
-    return this.channelsService.pushMsg(channel, this.createMsgObj(channel, sender, payload.text));
+  async sendMsg (channel: string, sender: string, payload: ISendMsgPayload): Promise<[IChannelRaw, IMessage] | null> {
+    const result = await this.channelsService.pushMsg(channel, this.createMsgObj(channel, sender, payload.text));
+    if (!result) {
+      return null;
+    }
+
+    return result;
   }
 
   async editMsg (channel: string, msgId: string, payload: IEditMsgPayload): Promise<IMessage | null> {

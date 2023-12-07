@@ -1,12 +1,12 @@
 import mongoose, { Types } from 'mongoose';
-import { ChannelsDao, channelsSchema, IChannel } from '.';
+import { ChannelsDao, channelsSchema, IChannelRaw } from '.';
 import { mockCreateChannelPayload } from '../../test/mock-channels-data';
 import MockDB from '../../test/mock-db';
 import { docToJSON, expectDocumentToEqual } from '../../test/test-utils';
 
 describe('channels-dao', () => {
   const db = new MockDB();
-  mongoose.model<IChannel>(ChannelsDao.MODEL_NAME, channelsSchema);
+  mongoose.model<IChannelRaw>(ChannelsDao.MODEL_NAME, channelsSchema);
   const channelsDao = new ChannelsDao();
 
   beforeAll(async () => {

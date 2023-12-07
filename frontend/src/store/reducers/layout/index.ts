@@ -1,6 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit';
-import Themes, { ITheme, getTheme } from '../../../themes/Themes';
+import Themes, { ITheme, getTheme } from '../../../themes/themes';
 
 export interface ISidebarState {
   hidden: boolean;

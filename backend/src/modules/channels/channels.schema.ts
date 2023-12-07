@@ -1,11 +1,11 @@
 import { Schema, Types } from 'mongoose';
-import { channelTypes, EChannelRoles, IChannel } from './channels.types';
+import { channelTypes, EChannelRoles, IChannelRaw } from './channels.types';
 import { USERS_COLLECTION_NAME } from '../users';
 import { messagesSchema } from '../messages';
 
 export const CHANNELS_COLLECTION_NAME = 'channels';
 
-export const channelsSchema = new Schema<IChannel>({
+export const channelsSchema = new Schema<IChannelRaw>({
   name: { type: String },
   type: {
     type: String,

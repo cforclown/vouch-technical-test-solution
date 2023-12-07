@@ -9,6 +9,7 @@ import { dro, Logger, RestApiException } from '../utils';
 class SIOController {
   static readonly INSTANCE_NAME = 'sioController';
 
+  users: { [userId: string]: string} = {};
   sioService: SIOService;
 
   constructor (sioService: SIOService) {
@@ -41,9 +42,11 @@ class SIOController {
       if (!userContext) {
         throw new Error('Unauthorized');
       }
+
+      this.users[userContext.user.id] = socket.id;
+      socket.join(userContext.user.id);
       const extsocket = <ExtSocket>socket;
       extsocket.userContext = userContext;
-
       next();
     } catch (err) {
       if (err instanceof Error) {
@@ -54,7 +57,7 @@ class SIOController {
     }
   }
 
-  async connection (socket: any): Promise<void> {
+  async connection (socket: Socket): Promise<void> {
     Logger.success('NEW CONNECTION: ' + socket.id);
 
     socket.use((packet: any, next: any) => {
@@ -65,6 +68,20 @@ class SIOController {
       } finally {
         next();
       }
+    });
+
+    socket.on('disconnect', () => {
+      Logger.warn(`DISCONNECTED ${socket.id}`);
+
+      Object.keys(this.users).every(user => {
+        if (this.users[user] === socket.id) {
+          delete this.users[user];
+          socket.leave(user);
+          return false;
+        }
+
+        return true;
+      });
     });
   }
 }

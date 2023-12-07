@@ -17,18 +17,24 @@ export const channelTypes = ['dm', 'group'] as const;
 export type ChannelsTypes = typeof channelTypes[number];
 export const isValidChannelType = (channelType: string): channelType is ChannelsTypes => channelTypes.includes(channelType as ChannelsTypes);
 
-export interface IChannel extends Document {
+export interface IChannelRaw extends Document {
   _id: Types.ObjectId;
   id: string;
   name?: string; // only when type==='group'
   type: ChannelsTypes;
   desc?: string;
-  users: IUser[] | Types.ObjectId[];
+  users: Types.ObjectId[];
   roles?: IChannelUserRole[]; //  undefined if type==='dm'
   messages: IMessage[];
   createdAt?: Date;
   updatedAt?: Date;
   archived?: boolean;
+}
+
+export interface IChannelRes extends Omit<IChannelRaw, 'users' | 'messages'> {
+  users: IUser[];
+  unreadMessages?: number;
+  lastMessage?: string;
 }
 
 export type ICreateDmChannel = {

@@ -1,6 +1,18 @@
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 import { USERS_COLLECTION_NAME } from '../users';
-import { IMessage } from './messages.types';
+
+export interface IMessage {
+  _id: Types.ObjectId;
+  id: string;
+  channel: Types.ObjectId;
+  sender: Types.ObjectId;
+  text: string;
+  read?: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+  archived?: boolean;
+}
+
 export const messagesSchema = new Schema<IMessage>({
   channel: {
     type: Schema.Types.ObjectId,
@@ -12,6 +24,7 @@ export const messagesSchema = new Schema<IMessage>({
     required: true
   },
   text: { type: String, required: true },
+  read: { type: Boolean, default: false },
   archived: { type: Boolean, default: false }
 }, { timestamps: true });
 

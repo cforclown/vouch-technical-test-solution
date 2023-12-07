@@ -9,26 +9,26 @@ export interface IChatMsg {
 const ChatBubble = styled.div<Omit<IChatMsg, 'text'>>`
   position: relative;
   max-width: 50%;
-  background-color: ${({ isFromYou }) => isFromYou ? '#5Db075' : '#E8E8E8'};
+  background-color: ${({ isFromYou, theme }) => isFromYou ? `${theme.colors.primary}99` : '#E8E8E8'};
   border-radius: 6px 6px ${({ isFromYou }) => isFromYou ? '0 6px' : '6px 0'};
-  color: white;
+  color: ${({ isFromYou, theme }) => isFromYou ? 'white' : theme.colors.dark};
   text-wrap: wrap;
   word-wrap: break-word;
   display: inline-block;
   text-align: left;
 
-  &:after{
+  &:${({ isFromYou }) => isFromYou ? 'after' : 'before'}{
     content: ' ';
     position: absolute;
     width: 0;
     height: 0;
-    left: auto;
-    right: 0px;
-    bottom: -12px;
-    border: 6px solid;
-    border-color: ${({ isFromYou }) => {
+    left: ${({ isFromYou }) => isFromYou ? 'auto' : '0px'};
+    right: ${({ isFromYou }) => isFromYou ? '0px' : 'auto'};
+    bottom: -8px;
+    border: 4px solid;
+    border-color: ${({ isFromYou, theme }) => {
     if (isFromYou) {
-      return '#5Db075 #5Db075 transparent transparent';
+      return `${theme.colors.primary}99 ${theme.colors.primary}99 transparent transparent`;
     }
         
     return '#E8E8E8 transparent transparent #E8E8E8';
@@ -38,7 +38,7 @@ const ChatBubble = styled.div<Omit<IChatMsg, 'text'>>`
 
 function ChatMsg({ text, isFromYou }: IChatMsg) {
   return (
-    <div className={twMerge('w-full flex', isFromYou ? 'justify-end' : 'justify-end')}>
+    <div className={twMerge('w-full flex', isFromYou ? 'justify-end' : 'justify-start')}>
       <ChatBubble className="px-4 py-2" isFromYou={isFromYou}>
         {text}
       </ChatBubble>

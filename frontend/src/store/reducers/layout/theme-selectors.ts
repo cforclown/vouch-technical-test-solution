@@ -1,8 +1,6 @@
 import { IAppState } from '../..';
-import { ITheme, IThemeMain } from '../../../themes/Themes';
+import { ITheme, IThemeColors } from '../../../themes/themes';
 
 export const selectTheme = (): (state: IAppState) => ITheme => (state: IAppState) => state.layout.theme;
-export const selectThemeMain = (state: IAppState): IThemeMain => {
-  const theme = selectTheme()(state);
-  return theme.main;
-};
+
+export const selectThemeColors = (): (state: IAppState) => IThemeColors => (state: IAppState) => state.layout.theme.colors;

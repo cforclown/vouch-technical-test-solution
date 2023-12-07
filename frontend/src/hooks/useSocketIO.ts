@@ -13,7 +13,7 @@ export type IEventResponseWrapper<T> = IMainAPIResponse<T>
 
 export type ISocketIOEventCallback<T> =(data?: IEventResponseWrapper<T>) => void | Promise<void>
 
-export const socketEventWrapper = <T>(
+export const socketEvent = <T>(
   callback: ISocketIOEventCallback<T>,
   loadingSetter?: (current: boolean) => void,
 ) => async (data?: IEventResponseWrapper<T>) => {

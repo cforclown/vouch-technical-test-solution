@@ -4,21 +4,21 @@ import HeaderBase from './header';
 
 const Header = styled(HeaderBase)`
   width: 100%;
-  height: 68px;  /* should be same as sidebar header height */
+  height: 66px;  /* should be same as sidebar header height */
   
-  background-color: ${(props) => props.theme.header.background};
+  background-color: ${(props) => props.theme.header.bg};
 
   margin: 0;
   padding: 0rem 1rem;
 
-  color: ${(props) => props.theme.header.color};
+  color: ${(props) => props.theme.header.textColor};
 
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
-  box-shadow: 1px 3px 6px ${(props) => props.theme.header.background}40;
+  box-shadow: 1px 3px 6px ${(props) => props.theme.header.bg}40;
 
   .header-left {
     display: flex;
@@ -43,7 +43,7 @@ const Header = styled(HeaderBase)`
   }
 
   .header-sidebar-toggle-btn {
-    border: 1px solid ${(props) => props.theme.header.color};
+    border: 1px solid ${(props) => props.theme.header.textColor};
     border-radius: 4px;
     padding: 4px 8px;
 
@@ -61,7 +61,7 @@ const Header = styled(HeaderBase)`
     visibility: collapse;
   }
   .header-sidebar-toggle-btn:hover {
-    box-shadow: 0px 0px 4px ${(props) => props.theme.header.color}cc;
+    box-shadow: 0px 0px 4px ${(props) => props.theme.header.textColor}cc;
   }
 `;
 Header.displayName = 'Header';

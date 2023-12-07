@@ -19,7 +19,8 @@
       "logout": "Logout",
       "startChattingWithSomeone": "Mulai ngobrol dengan seseorang",
       "chat": "Chat",
-      "findUSers": "Temukan user lain"
+      "findUSers": "Temukan user lain",
+      "typeYourMsgHere": "Ketik pesan anda disini"
     }
   }
 }

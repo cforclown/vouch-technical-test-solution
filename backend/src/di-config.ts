@@ -32,7 +32,7 @@ export const container = createContainer({
 
 export function setup (): void {
   container.register({
-    app: asFunction(App),
+    app: asFunction(App).singleton(),
     mainRouter: asFunction(MainRouter),
     apiRouter: asFunction(ApiRouter),
     [Database.INSTANCE_NAME]: asClass(Database),

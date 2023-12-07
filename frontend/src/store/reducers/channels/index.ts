@@ -33,6 +33,8 @@ export interface IChannel {
   users: IUser[];
   roles?: IChannelUserRole[]; //  undefined if type==='dm'
   messages: IMessage[];
+  unreadMessages?: number;
+  lastMessage?: string;
   createdAt?: Date;
   updatedAt?: Date;
   archived?: boolean;

@@ -2,12 +2,14 @@ import { useRef } from 'react';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 
 interface IChatForm {
   submit(text: string): void;
 }
 
 function ChatForm({ submit }: IChatForm) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const onInputKeyDown = (e: any): void => {
@@ -37,7 +39,7 @@ function ChatForm({ submit }: IChatForm) {
         ref={inputRef}
         className="w-full me-3"
         style={{ height: '44px' }}
-        placeholder="Type your message here"
+        placeholder={t('common.typeYourMsgHere')}
         onKeyDown={onInputKeyDown}
       />
       <Button

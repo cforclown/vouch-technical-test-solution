@@ -5,7 +5,7 @@ import { IO_INSTANCE_NAME } from '../../socketio';
 export abstract class WithSocketIO {
   protected io?: Server;
 
-  protected getSio (): void {
+  protected getSio (): Server {
     if (!this.io) {
       this.io = container.resolve(IO_INSTANCE_NAME);
     }
@@ -13,5 +13,7 @@ export abstract class WithSocketIO {
     if (!this.io) {
       throw new Error('SocketIO instance not found');
     }
+
+    return this.io;
   }
 }

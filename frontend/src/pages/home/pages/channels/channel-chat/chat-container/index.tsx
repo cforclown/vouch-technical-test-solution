@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Spinner from '@/components/spinner/Spinner';
 import OverflowContainer from '@/components/overflow-container';
 import ChatMsg from '../chat-msg';
@@ -25,10 +25,30 @@ function ChatContainer({
   const msgsContainerRef = useRef<HTMLDivElement>(null);
   const pushMsg = useAction(pushMsgAction);
 
+  useEffect(() =>{
+    scrollToBottom('auto');
+  }, []);
+
   const onSubmit = async (text: string): Promise<void> => {
     const newMsg = await sendMsg(channel, text);
     pushMsg(newMsg);
   };
+
+  const scrollTo = (to: number, behavior: 'auto' | 'smooth' = 'auto'): void => {
+    msgsContainerRef.current?.scrollTo({
+      top: to,
+      behavior
+    });
+  };
+
+  const scrollToBottom = (behavior: 'auto' | 'smooth' = 'smooth'): void => {
+    if (!msgsContainerRef.current) {
+      return;
+    } 
+
+    scrollTo(msgsContainerRef.current.scrollHeight, behavior);
+  };
+
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-start relative overflow-hidden">

@@ -1,24 +1,30 @@
-import { IChannel } from './channels.types';
+import { IChannelRaw, IChannelRes } from './channels.types';
 import { BaseDataAccessObject } from '../../utils/base/base-dao-mongo';
 import { model, Types } from 'mongoose';
 import { IExplorationPayload, IExplorationRes } from '../../utils';
 import { IMessage } from '../messages';
 
-export class ChannelsDao extends BaseDataAccessObject<IChannel> {
+export class ChannelsDao extends BaseDataAccessObject<IChannelRaw> {
   public static readonly INSTANCE_NAME = 'channelsDao';
   public static readonly MODEL_NAME = 'channels';
 
   constructor () {
-    super(model<IChannel>(ChannelsDao.MODEL_NAME));
+    super(model<IChannelRaw>(ChannelsDao.MODEL_NAME));
   }
 
-  async createChannel (payload: Record<string, any> & { id?: string | undefined; }, populateUsers?: boolean): Promise<IChannel> {
+  async getChannel (id: string): Promise<Omit<IChannelRaw, 'messages'> | null> {
+    return this.model.findOne({ _id: id, archived: false }).select('-messages').exec();
+  }
+
+  async createChannel(payload: Record<string, any>): Promise<IChannelRaw>;
+  async createChannel(payload: Record<string, any>, populateUsers: true): Promise<IChannelRes>;
+  async createChannel (payload: Record<string, any>, populateUsers?: boolean): Promise<IChannelRaw | IChannelRes> {
     const createdChannel = await this.create(payload);
     if (!populateUsers) {
       return createdChannel;
     }
 
-    const channel = await this.model.findById(createdChannel).populate('users').exec();
+    const channel = await this.model.findById<IChannelRes>(createdChannel).populate('users').exec();
     if (!channel) {
       throw new Error('Unexpected error occured when creating channel');
     }
@@ -26,19 +32,73 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
     return channel;
   }
 
-  async getUserChannels (user: string): Promise<IChannel[]> {
+  async getUserChannels (user: string): Promise<Omit<IChannelRes, 'messages'>[]> {
     return this.model
-      .find({
-        users: new Types.ObjectId(user),
-        archived: false
-      })
-      .populate('users')
-      .select('-messages')
-      .sort({ updatedAt: 'descending' })
+      .aggregate([
+        {
+          $match: {
+            users: new Types.ObjectId(user),
+            archived: false
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'users',
+            foreignField: '_id',
+            as: 'users',
+            pipeline: [{
+              $project: {
+                password: 0
+              }
+            }]
+          }
+        },
+        {
+          $addFields: {
+            id: '$_id',
+            users: {
+              $map: {
+                input: '$users',
+                as: 'user',
+                in: {
+                  $mergeObjects: [
+                    '$$user',
+                    {
+                      id: '$$user._id'
+                    }
+                  ]
+                }
+              }
+            },
+            unreadMessages: {
+              $size: {
+                $filter: {
+                  input: { $ifNull: ['$messages', []] }, // default empty array if array is does not exist
+                  cond: {
+                    $and: [
+                      '$$this.read', // only keep the truthy check value
+                      { $eq: ['$$this.sender', new Types.ObjectId(user)] }
+                    ]
+                  }
+                }
+              }
+            },
+            lastMessage: {
+              $last: '$messages.text'
+            }
+          }
+        },
+        {
+          $project: {
+            messages: 0
+          }
+        }
+      ])
       .exec();
   }
 
-  async explore ({ query, pagination }: IExplorationPayload): Promise<IExplorationRes<IChannel>> {
+  async explore ({ query, pagination }: IExplorationPayload): Promise<IExplorationRes<IChannelRaw>> {
     const result = await this.model
       .aggregate([
         {
@@ -93,15 +153,21 @@ export class ChannelsDao extends BaseDataAccessObject<IChannel> {
     return response;
   }
 
-  async pushMsg (channel: string, msg: IMessage): Promise<IMessage | null> {
-    const channelDoc = await this.model.findOneAndUpdate({ _id: channel }, {
+  async pushMsg (channel: string, msg: IMessage): Promise<[IChannelRaw, IMessage] | null>;
+  async pushMsg (channel: string, msg: IMessage, populateUsers: true): Promise<[IChannelRes, IMessage] | null>;
+  async pushMsg (channel: string, msg: IMessage, populateUsers?: boolean): Promise<[IChannelRaw | IChannelRes, IMessage] | null> {
+    const pipeline = this.model.findOneAndUpdate({ _id: channel }, {
       $push: { messages: msg }
     }, { new: true });
+    if (populateUsers) {
+      pipeline.populate('users');
+    }
+    const channelDoc = await pipeline.exec();
     if (!channelDoc) {
       return null;
     }
 
-    return msg;
+    return [channelDoc, msg];
   }
 
   async editMsg (channel: string, msgId: string, text: string): Promise<IMessage | null> {
