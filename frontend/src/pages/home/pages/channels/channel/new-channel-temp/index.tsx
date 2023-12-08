@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import OverflowContainer from '@/components/overflow-container';
-import ChatForm from '../chat-form';
+import MessageForm from '../message-form';
 import { startConversation } from '../../channels.service';
 import { IUser } from '@/utils/common';
 import useAction from '@/hooks/useAction';
@@ -39,7 +39,7 @@ function ChatContainerTemp({ recipient }: IChatContainerTemp): JSX.Element {
   return (
     <div className="w-full h-full flex flex-col justify-center items-start relative overflow-hidden">
       <OverflowContainer ref={msgsContainerRef} className="px-5" onScroll={() => {}} />
-      <ChatForm submit={onSubmit} />
+      <MessageForm submit={onSubmit} />
     </div>
   );
 }

@@ -8,10 +8,7 @@ import { IMessage } from '../messages';
 export class ChannelsService extends BaseService<IChannelRaw> {
   public static readonly INSTANCE_NAME = 'channelsService';
 
-  private readonly channelsDao: ChannelsDao;
-  private readonly usersService: UsersService;
-
-  constructor (channelsDao: ChannelsDao, usersService: UsersService) {
+  constructor (private readonly channelsDao: ChannelsDao, private readonly usersService: UsersService) {
     super(channelsDao);
 
     this.channelsDao = channelsDao;
@@ -86,6 +83,10 @@ export class ChannelsService extends BaseService<IChannelRaw> {
 
   async editMsg (channel: string, msgId: string, text: string): Promise<IMessage | null> {
     return this.channelsDao.editMsg(channel, msgId, text);
+  }
+
+  async readMsgs (channel: string, user: string): Promise<void> {
+    return this.channelsDao.readMsgs(channel, user);
   }
 
   async getMsgs (channel: string): Promise<IMessage[] | null> {

@@ -20,6 +20,7 @@ export class MessagesController {
     this.getMsgs = this.getMsgs.bind(this);
     this.startConversation = this.startConversation.bind(this);
     this.sendMsg = this.sendMsg.bind(this);
+    this.readMsgs = this.readMsgs.bind(this);
   }
 
   async getMsgs ({ params }: Request): Promise<IMessage[]> {
@@ -67,5 +68,12 @@ export class MessagesController {
     }
 
     return msg;
+  }
+
+  async readMsgs ({ user: u, params }: Request): Promise<boolean> {
+    const user = u as IUser;
+    await this.messagesService.readMsgs(params.id, user.id);
+
+    return true;
   }
 }

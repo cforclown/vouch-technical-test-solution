@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode, Method } from 'axios';
 import { JsonWebTokenError, NotBeforeError, TokenExpiredError, verify } from 'jsonwebtoken';

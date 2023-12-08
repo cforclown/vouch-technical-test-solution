@@ -36,7 +36,7 @@ const ChatBubble = styled.div<Omit<IChatMsg, 'text'>>`
   }
 `;
 
-function ChatMsg({ text, isFromYou }: IChatMsg) {
+function Message({ text, isFromYou }: IChatMsg) {
   return (
     <div className={twMerge('w-full flex', isFromYou ? 'justify-end' : 'justify-start')}>
       <ChatBubble className="px-4 py-2" isFromYou={isFromYou}>
@@ -46,4 +46,4 @@ function ChatMsg({ text, isFromYou }: IChatMsg) {
   );
 }
 
-export default ChatMsg;
+export default Message;

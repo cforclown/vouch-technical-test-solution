@@ -12,7 +12,7 @@ export function MessagesRouter (messagesController: MessagesController): Router 
 
   /**
    * @swagger
-   * /api/v1/messages:
+   * /api/v1/messages/{id}:
    *      post:
    *          tags:
    *              - Messages
@@ -20,6 +20,8 @@ export function MessagesRouter (messagesController: MessagesController): Router 
    *          responses:
    *              '200':
    *                  description: OK
+   *          security:
+   *              - Bearer: []
    *          parameters:
    *              -   name: id
    *                  in: path
@@ -38,13 +40,15 @@ export function MessagesRouter (messagesController: MessagesController): Router 
    *          responses:
    *              '200':
    *                  description: OK
+   *          security:
+   *              - Bearer: []
    *          requestBody:
    *              description: "Start a new conversation payload"
    *              required: true
    *              content:
    *                  application/json:
    *                      schema:
-   *                          $ref: '#/components/schemas/sendMsg'
+   *                          $ref: '#/components/schemas/startConversation'
    */
   router.post('/new', validateBody(startConversationPayloadSchema), RequestHandler(messagesController.startConversation));
 
@@ -58,6 +62,13 @@ export function MessagesRouter (messagesController: MessagesController): Router 
    *          responses:
    *              '200':
    *                  description: OK
+   *          security:
+   *              - Bearer: []
+   *          parameters:
+   *              -   name: id
+   *                  in: path
+   *                  description: Channel id
+   *                  required: true
    *          requestBody:
    *              description: "Send message payload"
    *              required: true
@@ -67,6 +78,26 @@ export function MessagesRouter (messagesController: MessagesController): Router 
    *                          $ref: '#/components/schemas/sendMsg'
    */
   router.put('/:id', validateParams(idSchema), validateBody(sendMsgPayloadSchema), RequestHandler(messagesController.sendMsg));
+
+  /**
+   * @swagger
+   * /api/v1/messages/read/{id}:
+   *      put:
+   *          tags:
+   *              - Messages
+   *          description: Read messages
+   *          responses:
+   *              '200':
+   *                  description: OK
+   *          security:
+   *              - Bearer: []
+   *          parameters:
+   *              -   name: id
+   *                  in: path
+   *                  description: Channel id
+   *                  required: true
+   */
+  router.put('/read/:id', validateParams(idSchema), RequestHandler(messagesController.readMsgs));
 
   return router;
 }

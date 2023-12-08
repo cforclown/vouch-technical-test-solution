@@ -39,6 +39,10 @@ export class MessagesService {
     return this.channelsService.editMsg(channel, msgId, payload.text);
   }
 
+  async readMsgs (channel: string, user: string): Promise<void> {
+    return this.channelsService.readMsgs(channel, user);
+  }
+
   createMsgObj (channel: string, sender: string, text: string): IMessage {
     const id = new Types.ObjectId();
     const createdAt = new Date();

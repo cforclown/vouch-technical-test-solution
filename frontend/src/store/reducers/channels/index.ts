@@ -56,14 +56,14 @@ const channelsSlice = createSlice({
   name: 'channels',
   initialState: channelsInitialState,
   reducers: {
-    setChannelsLoading(state, action) {
-      state.loading = action.payload;
+    setChannelsLoading(state, { payload }) {
+      state.loading = payload;
     },
-    setChannels(state, action) {
-      state.channels = action.payload;
+    setChannels(state, { payload }) {
+      state.channels = payload;
     },
-    setSelectedChannel(state, action) {
-      state.selectedChannel = { ...action.payload };
+    setSelectedChannel(state, { payload }) {
+      state.selectedChannel = payload;
     }
   }
 });

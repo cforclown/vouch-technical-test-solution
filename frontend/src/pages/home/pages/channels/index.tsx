@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Loader from '@/components/loader/Loader.style';
 
 const Welcome =  lazy(() => import('../../pages/welcome'));
-const Chat =  lazy(() => import('./channel-chat'));
+const Chat =  lazy(() => import('./channel'));
 
 function Channels() {
   return (

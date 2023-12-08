@@ -13,3 +13,5 @@ export const sendMsg = (channel: string, text: string) => callProtectedMainAPI(
   getAPIEndpoint(`/messages/${channel}`, 'PUT'),
   { text }
 );
+
+export const readMsgs = (channel: string) => callProtectedMainAPI(getAPIEndpoint(`/messages/read/${channel}`, 'PUT'));

@@ -77,8 +77,8 @@ export class ChannelsDao extends BaseDataAccessObject<IChannelRaw> {
                   input: { $ifNull: ['$messages', []] }, // default empty array if array is does not exist
                   cond: {
                     $and: [
-                      '$$this.read', // only keep the truthy check value
-                      { $eq: ['$$this.sender', new Types.ObjectId(user)] }
+                      { $ne: ['$$this.read', true] },
+                      { $ne: ['$$this.sender', new Types.ObjectId(user)] }
                     ]
                   }
                 }
@@ -184,6 +184,33 @@ export class ChannelsDao extends BaseDataAccessObject<IChannelRaw> {
     await channelDoc.save();
 
     return msgDoc;
+  }
+
+  async readMsgs (channel: string, user: string): Promise<void> {
+    await this.model.updateOne({ _id: channel }, [{
+      $set: {
+        messages: {
+          $map: {
+            input: '$messages',
+            as: 'message',
+            in: {
+              $cond: [
+                {
+                  $and: [
+                    { $ne: ['$$message.read', true] },
+                    { $ne: ['$$message.sender', new Types.ObjectId(user)] }
+                  ]
+                },
+                {
+                  $mergeObjects: ['$$message', { read: true }]
+                },
+                '$$message'
+              ]
+            }
+          }
+        }
+      }
+    }]);
   }
 
   async getMsgs (channel: string): Promise<IMessage[] | null> {

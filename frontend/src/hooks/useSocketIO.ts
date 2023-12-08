@@ -61,7 +61,7 @@ function useSocketIOClient(userContext: IUserContext): [socket: Socket, connecte
   });
   
   socket.current.on('disconnect', () => {
-    console.error('Socket disconnected');
+    // console.error('Socket disconnected');
     setConnected(false);
   });
 

@@ -38,7 +38,8 @@ function SearchInput({
         submitsearch?.(currentRef.value);
       }
     } catch (err) {
-      // eslint-disable-next-line no-empty
+      // eslint-disable-next-line no-console
+      console.error('Search input: Unextecped error occured');
     }
   };
 

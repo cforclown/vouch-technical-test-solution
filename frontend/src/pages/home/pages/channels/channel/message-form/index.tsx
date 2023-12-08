@@ -8,7 +8,7 @@ interface IChatForm {
   submit(text: string): void;
 }
 
-function ChatForm({ submit }: IChatForm) {
+function MessageForm({ submit }: IChatForm) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -53,4 +53,4 @@ function ChatForm({ submit }: IChatForm) {
   );
 }
 
-export default ChatForm;
+export default MessageForm;
