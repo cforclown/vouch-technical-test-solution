@@ -90,6 +90,11 @@ export class ChannelsDao extends BaseDataAccessObject<IChannelRaw> {
           }
         },
         {
+          $sort: {
+            updatedAt: -1
+          }
+        },
+        {
           $project: {
             messages: 0
           }
